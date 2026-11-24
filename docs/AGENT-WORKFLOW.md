@@ -1,6 +1,6 @@
 # Runbook GitHub dan alur agent
 
-Acuan: [PRD](PRD.md) §§2, 9, 11–13; [AGENTS](../AGENTS.md). Tanggal inspeksi: 2026-11-24. Status Fase 4.5: remote dan akses GitHub terverifikasi; publikasi branch/PR dan CI GitHub menunggu persetujuan. Integrasi agent belum operasional.
+Acuan: [PRD](PRD.md) §§2, 9, 11–13; [AGENTS](../AGENTS.md). Tanggal inspeksi: 2026-11-24. Status Fase 4.5: remote dan akses GitHub terverifikasi; baseline dan branch fondasi sudah dipublikasikan dengan persetujuan owner; draft PR dan CI push/PR berhasil diverifikasi. Proteksi/review masih terhambat; integrasi agent belum operasional.
 
 ## Status repository dan bootstrap
 
@@ -10,7 +10,7 @@ Keputusan owner dalam penugasan **PLANNER — PHASE 4.5: GITHUB INTEGRATION**, 2
 
 Fase 4.5 mengizinkan inspeksi, konfigurasi remote lokal, dan persiapan PR, tetapi mewajibkan persetujuan sebelum mengubah riwayat remote. Bootstrap ini belum memiliki Issue dan tidak membuat nomor palsu. Tidak ada izin melanjutkan Fase 5, merge, atau deployment.
 
-### Bukti inspeksi GitHub Fase 4.5
+### Bukti inspeksi GitHub sebelum publikasi Fase 4.5
 
 | Pemeriksaan aktual | Hasil pada 2026-11-24 | Implikasi |
 |---|---|---|
@@ -29,9 +29,9 @@ Fase 4.5 mengizinkan inspeksi, konfigurasi remote lokal, dan persiapan PR, tetap
 
 Token GitHub CLI mempunyai scope `repo`, `workflow`, `read:org`, dan `gist`; tidak ada bukti scope Projects. `has_projects: true` pada metadata hanya menunjukkan fitur diizinkan, bukan board atau state workflow sudah tersedia. Identitas/login lokal tidak boleh diteruskan sebagai secret agent/CI. Tidak ada pengaturan GitHub yang diubah pada inspeksi ini.
 
-### Persiapan publikasi yang memerlukan persetujuan
+### Rencana bootstrap yang disetujui dan dijalankan
 
-Branch lokal `main` disiapkan pada `833603d`; branch `chore/m0-workflow-foundation` tetap memuat seluruh fondasi dan commit dokumentasi integrasi. Tidak perlu cherry-pick atau penggabungan unrelated histories karena remote kosong. Publikasi direncanakan sebagai berikut (belum dijalankan):
+Branch lokal `main` disiapkan pada `833603d`; branch `chore/m0-workflow-foundation` tetap memuat seluruh fondasi dan commit dokumentasi integrasi. Tidak perlu cherry-pick atau penggabungan unrelated histories karena remote kosong. Rencana berikut disetujui owner dan dilaksanakan pada 2026-11-24; bukti hasil ada sesudah daftar ini:
 
 1. Owner menyetujui publikasi **baseline main, branch fondasi, dan draft PR** secara eksplisit. Ini pengecualian bootstrap main yang hanya berisi dua dokumen asli, bukan push perubahan fondasi langsung ke main.
 2. Fetch dan periksa refs remote lagi. Jika remote sudah berisi branch/commit baru, hentikan rencana bootstrap ini, bandingkan riwayat, lalu susun rencana baru; jangan menimpa perubahan tersebut.
@@ -40,9 +40,21 @@ Branch lokal `main` disiapkan pada `833603d`; branch `chore/m0-workflow-foundati
 5. Verifikasi default branch main, commit remote sesuai lokal, diff PR, dan run `M0 CI` pada SHA yang tepat. Job yang direncanakan bernama `M0 validation`; konfirmasi nama/status dari run aktual. Hanya feature push/PR yang memiliki workflow; baseline main belum berisi CI.
 6. Pertahankan PR sebagai draft selama kontrol merge/reviewer belum siap. Jangan merge, deploy, membuat Issue, atau melanjutkan Fase 5. Persetujuan push tidak berarti persetujuan tindakan tersebut.
 
-Kriteria siap PR: baseline dan head teridentifikasi, diff M0 terbatas, PRD/README asli tetap, validasi lokal lulus, remote resmi terverifikasi, serta risiko/otorisasi publikasi tercatat. Kriteria integrasi CI selesai memerlukan URL PR dan run GitHub yang benar-benar lulus; saat ini keduanya **pending**. Proteksi branch dan review independen tetap gate terpisah sebelum merge menurut PRD §§9.5, 11.
+Kriteria siap PR: baseline dan head teridentifikasi, diff M0 terbatas, PRD/README asli tetap, validasi lokal lulus, remote resmi terverifikasi, serta risiko/otorisasi publikasi tercatat. URL PR dan run GitHub yang lulus kini tersedia untuk head awal `f2e5512`. Setiap commit berikutnya tetap harus memiliki bukti CI terbaru pada PR yang sama. Proteksi branch dan review independen tetap gate terpisah sebelum merge menurut PRD §§9.5, 11.
 
 Untuk hambatan plan, owner dapat mengevaluasi peningkatan plan yang mendukung proteksi repository private; jangan mengubah visibility menjadi public secara otomatis. Jika menggunakan kontrol setara, mekanisme dan bukti enforceability harus disetujui secara eksplisit terlebih dahulu. Menunggu kontrol ini tidak menghalangi persiapan draft PR, tetapi merge tetap BLOCKED.
+
+### Hasil publikasi dan verifikasi GitHub
+
+Owner menjawab **"oke saya izinkan"** pada 2026-11-24 atas permintaan eksplisit push baseline `main` pada `833603d`, push branch fondasi pada `f2e5512`, pembuatan draft PR, dan verifikasi CI. Persetujuan ini tidak mencakup merge, deployment, perubahan visibility/proteksi, pembuatan Issue, atau Fase 5. Catatan ini merujuk instruksi langsung dalam percakapan, bukan approval review GitHub.
+
+- Remote kembali diperiksa kosong sebelum push. Push membuat dua branch baru tanpa force-push: `main` pada `833603ddc4c126ee70c7549989b49cec5a6442f7` dan `chore/m0-workflow-foundation` pada head awal `f2e5512684e71433dc45717fed5b987d1ef0f81a`. SHA remote cocok dengan lokal; commit `cf440b6`, baseline, dan semua ref lokal tetap dipertahankan. Kedua branch lokal melacak origin masing-masing.
+- Default branch GitHub terverifikasi `main`; visibility tetap private. Main masih hanya berisi PRD dan README asli. Fondasi diajukan melalui [draft PR #1](https://github.com/MuhammadZidniirfan05-dot/batani-company/pull/1), base `main`, head `chore/m0-workflow-foundation`; 18 berkas tambahan, tanpa perubahan PRD/README atau penghapusan berkas.
+- [CI push 45413815332](https://github.com/MuhammadZidniirfan05-dot/batani-company/actions/runs/45413815332) dan [CI pull_request 45414140487](https://github.com/MuhammadZidniirfan05-dot/batani-company/actions/runs/45414140487) berstatus completed/success pada head awal `f2e5512`. Nama check aktual: **M0 validation**, workflow **M0 CI**. Event pull_request memvalidasi hasil penggabungan sementara GitHub; tidak mengubah main.
+- Log run push membuktikan Ubuntu 24.04, Node `24.22.3`, npm `11.19.1`, instalasi lockfile, dan **46/46 pemeriksaan lulus; 0 gagal**. Ini bukti eksekusi GitHub, terpisah dari hasil lokal Windows dengan Node `24.14.1`/npm `11.11.0`. Tidak ada tes Laravel, build frontend, deployment, atau pemanggilan agent.
+- API proteksi main dan rulesets diperiksa ulang setelah publikasi: tetap HTTP 403 dengan pesan entitlement plan. PR status `CLEAN` hanya menunjukkan kondisi teknis penggabungan; bukan approval atau bukti proteksi aktif. Review independen belum diberikan. PR tetap draft dan merge BLOCKED sesuai PRD §11.
+
+Bukti untuk commit dokumentasi lanjutan dicatat pada deskripsi/checks PR #1 setelah CI selesai; tautan run di atas tetap menjadi bukti historis bootstrap, bukan klaim tentang SHA yang lebih baru. Template Issue/PR dan instruksi agent sudah ada pada branch PR, tetapi belum menjadi konfigurasi default branch main. Tombol manual workflow juga belum dianggap siap digunakan sebelum workflow tersedia di default branch. Label tambahan, Projects, reviewer berwenang, kontrol merge, dan environment tetap manual/pending; template deployment tetap disabled.
 
 ## Peran dan handoff
 
@@ -83,7 +95,7 @@ Untuk dokumentasi tanpa artefak deployment, aturan closure belum ditentukan PRD.
 
 [CI](../.github/workflows/ci.yml) bernama `M0 CI`, dengan nama check yang direncanakan `M0 validation`. Trigger: push pada branch yang tercantum, PR ke main, dan manual dispatch. Tidak memakai path filter agar required check tidak hilang ketika berkas lain berubah. Tidak ada `pull_request_target`, akses secret, atau token tulis. Checkout tidak menyimpan kredensial Git. Action dikunci SHA; dependensi validator dikunci lockfile.
 
-CI menjalankan Node untuk validasi dokumen/YAML/form/PR/template deployment yang memang ada, bukan PHP, Laravel, migrasi, atau build frontend. [Validator](../.github/validation/validate.mjs) juga bisa dijalankan lokal dengan perintah [AGENTS](../AGENTS.md). Kelulusan tidak membuktikan seluruh schema GitHub, keamanan menyeluruh, kebenaran isi Issue, maupun integrasi agent. Uji GitHub pertama masih wajib.
+CI menjalankan Node untuk validasi dokumen/YAML/form/PR/template deployment yang memang ada, bukan PHP, Laravel, migrasi, atau build frontend. [Validator](../.github/validation/validate.mjs) juga bisa dijalankan lokal dengan perintah [AGENTS](../AGENTS.md). Kelulusan tidak membuktikan seluruh schema GitHub, keamanan menyeluruh, kebenaran isi Issue, maupun integrasi agent. Uji GitHub pertama sudah lulus sebagaimana bukti di atas; required-check enforcement masih belum aktif.
 
 CI gagal → Executor memperbaiki; CI tidak tersedia → BLOCKED untuk approval final. CI lulus → Reviewer memeriksa acceptance criteria. CHANGES_REQUESTED wajib menyertakan finding, file/lokasi, severity, alasan, koreksi, dan verifikasi; gunakan [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md). Perbarui PR yang sama. Komentar AI tidak menggantikan required check atau persetujuan manusia.
 

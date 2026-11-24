@@ -16,7 +16,7 @@ Acuan: [PRD](PRD.md) §§9.6, 10–13. Ini rencana dependensi, bukan janji tangg
 
 M0 tidak membuat aplikasi, migrasi, resource Filament, UI, konten bisnis, search berbayar, atau deployment. Fase percakapan 3–4 menghasilkan paket fondasi; itu tidak otomatis menandakan seluruh milestone M0 diterima. Fase 5 memerlukan persetujuan owner terpisah.
 
-Fase 4.5 menghubungkan folder lokal ke repository resmi yang dipilih owner dan menyiapkan PR M0. Akses admin dan remote telah diverifikasi; publikasi baseline/branch, PR, dan run CI menunggu persetujuan push. API proteksi branch/ruleset mengembalikan HTTP 403 karena keterbatasan plan repository private. M0-B belum selesai sampai baseline/PR tersedia; M0-C belum lulus. Bukti dan rencana aman: [AGENT-WORKFLOW](AGENT-WORKFLOW.md), mengacu PRD §§9.5, 11, 13.
+Fase 4.5 menghubungkan folder lokal ke repository resmi yang dipilih owner. Setelah persetujuan publikasi, baseline main dan branch fondasi sudah tersedia, [draft PR #1](https://github.com/MuhammadZidniirfan05-dot/batani-company/pull/1) dibuat, dan CI push/pull_request berhasil pada head awal `f2e5512`. Bagian teknis repository/bootstrap M0-B sudah terbukti, tetapi penerimaan owner M0-A tetap terpisah. M0-C baru memenuhi eksekusi CI; enforcement checks/review masih BLOCKED karena API proteksi branch/ruleset mengembalikan HTTP 403 keterbatasan plan repository private. M0-D/F/G belum diaktifkan; gate teknologi M0-E belum lulus. Bukti dan batas kewenangan: [AGENT-WORKFLOW](AGENT-WORKFLOW.md), mengacu PRD §§3, 9.5, 11, 13. Tidak ada izin memulai Fase 5.
 
 ## Backlog rancangan lokal
 
