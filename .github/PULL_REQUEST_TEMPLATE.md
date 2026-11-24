@@ -4,7 +4,7 @@ Refs #<!-- nomor Issue nyata; jangan gunakan auto-close sebelum gate release -->
 
 Referensi: `docs/PRD.md` §... / FR-... / CMS-...
 
-Untuk bootstrap Fase 3–4 yang belum memiliki Issue: hapus baris Refs, catat instruksi langsung owner, dan nyatakan bahwa Issue belum dibuat. Jangan mengarang nomor, review, atau persetujuan.
+Untuk bootstrap Fase 3–4 atau integrasi Fase 4.5 yang belum memiliki Issue: hapus baris Refs, catat instruksi langsung owner beserta batas otorisasinya, dan nyatakan bahwa Issue belum dibuat. Jangan mengarang nomor, review, atau persetujuan.
 
 ## Ringkasan implementasi
 

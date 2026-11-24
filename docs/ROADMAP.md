@@ -16,6 +16,8 @@ Acuan: [PRD](PRD.md) §§9.6, 10–13. Ini rencana dependensi, bukan janji tangg
 
 M0 tidak membuat aplikasi, migrasi, resource Filament, UI, konten bisnis, search berbayar, atau deployment. Fase percakapan 3–4 menghasilkan paket fondasi; itu tidak otomatis menandakan seluruh milestone M0 diterima. Fase 5 memerlukan persetujuan owner terpisah.
 
+Fase 4.5 menghubungkan folder lokal ke repository resmi yang dipilih owner dan menyiapkan PR M0. Akses admin dan remote telah diverifikasi; publikasi baseline/branch, PR, dan run CI menunggu persetujuan push. API proteksi branch/ruleset mengembalikan HTTP 403 karena keterbatasan plan repository private. M0-B belum selesai sampai baseline/PR tersedia; M0-C belum lulus. Bukti dan rencana aman: [AGENT-WORKFLOW](AGENT-WORKFLOW.md), mengacu PRD §§9.5, 11, 13.
+
 ## Backlog rancangan lokal
 
 ID berikut adalah ID rencana, bukan nomor atau Issue GitHub. Tidak ada Issue yang diterbitkan. Konversi melalui [ISSUE-GUIDELINES](ISSUE-GUIDELINES.md) hanya setelah owner mengizinkan fase berikutnya.

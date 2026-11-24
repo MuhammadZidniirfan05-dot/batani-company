@@ -13,7 +13,7 @@ Acuan: [PRD](PRD.md) §§9.1, 9.4–9.5, 11, 13. Reviewer memeriksa Issue, PR, d
 ## Checklist
 
 - [ ] Scope dan referensi PRD tepat; tidak ada perubahan requirement diam-diam.
-- [ ] Issue nyata tersedia, atau otorisasi bootstrap Fase 3–4 dicatat tanpa nomor palsu.
+- [ ] Issue nyata tersedia, atau otorisasi bootstrap Fase 3–4 / integrasi Fase 4.5 dicatat tanpa nomor palsu; persetujuan push diperiksa terpisah.
 - [ ] Acceptance criteria dipetakan ke bukti pada SHA terbaru.
 - [ ] Tes yang diklaim benar-benar berjalan; Laravel/frontend tidak diklaim berjalan dalam M0.
 - [ ] Tidak ada secret, token production, input PR yang disisipkan ke shell, atau izin tulis berlebihan.

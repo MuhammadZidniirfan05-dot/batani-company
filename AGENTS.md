@@ -17,6 +17,7 @@ Acuan: [PRD](docs/PRD.md) §§3, 9, 11, 13. Berlaku untuk seluruh repository dan
 - Jangan mengubah [PRD](docs/PRD.md) tanpa keputusan perubahan yang eksplisit. PHP 8.6 tetap target; Laravel 13 dan Filament 5 menunggu gate kompatibilitas.
 - Selama M0: tidak ada scaffolding Laravel/Filament, migrasi, halaman publik, desain, atau deployment. Penerimaan fondasi dan validasi teknologi mendahului M1.
 - Jangan membuat Issue baru dalam penugasan Fase 3–4 saat ini. Pengecualian bootstrap ini berasal dari instruksi langsung owner: branch `chore/m0-workflow-foundation` boleh menyiapkan fondasi tanpa nomor Issue. Catat otorisasi tersebut; jangan memakai nomor palsu. Pekerjaan berikutnya kembali memakai Issue setelah owner mengizinkan fase selanjutnya.
+- Otorisasi owner Fase 4.5 (2026-11-24) memperluas bootstrap hanya untuk integrasi repository resmi `MuhammadZidniirfan05-dot/batani-company`, pemeriksaan akses/konfigurasi, dan persiapan PR M0 pada branch yang sama. Minta persetujuan sebelum push atau perubahan riwayat remote. Jangan membuat repository/Issue baru, menghapus commit/branch, force-push, merge, deploy, atau melanjutkan Fase 5. Bukti dan rencana publikasi ada di [AGENT-WORKFLOW](docs/AGENT-WORKFLOW.md).
 
 ## Keamanan dan izin
 
@@ -40,7 +41,7 @@ Acuan: [PRD](docs/PRD.md) §§3, 9, 11, 13. Berlaku untuk seluruh repository dan
 - Catat perintah, versi runtime, hasil/exit code, keterbatasan, dan commit yang diperiksa. Log lokal tidak boleh disebut hasil GitHub Actions.
 - Gunakan [template PR](.github/PULL_REQUEST_TEMPLATE.md), tautkan Issue nyata saat tersedia, referensi bagian PRD, scope, risiko, dan bukti. Ikuti [checklist review](docs/REVIEW-CHECKLIST.md).
 - Jika CHANGES_REQUESTED, perbaiki branch dan PR yang sama, jalankan ulang pemeriksaan terdampak, lalu minta review pada commit terbaru.
-- Akhiri dengan status terpisah: dibuat, tervalidasi lokal, aktif di GitHub, manual/pending, dan blocker. Fase 3–4 berhenti sebelum Fase 5.
+- Akhiri dengan status terpisah: dibuat, tervalidasi lokal, aktif di GitHub, manual/pending, dan blocker. Fase 3–4 maupun integrasi Fase 4.5 berhenti sebelum Fase 5.
 
 ## Pembagian tanggung jawab
 

@@ -62,7 +62,7 @@ M1 menambahkan pengujian aplikasi nyata setelah runtime diterima. M2–M4 menamb
 | Keputusan | Penanggung jawab | Batas sebelum |
 |---|---|---|
 | Runtime/dependensi/extension/host PHP 8.6 dan Pest atau PHPUnit | Planner menyiapkan bukti, owner menerima | Scaffolding M1 |
-| Repository final, plan, kontrol merge, identitas dan biaya agent | Owner + Planner | Aktivasi alur GitHub |
+| Plan, kontrol merge, identitas dan biaya agent; repository resmi sudah dipilih owner pada Fase 4.5 | Owner + Planner | Aktivasi alur GitHub; bukti di [runbook](AGENT-WORKFLOW.md) |
 | Model publications/studies dan editorial governance | Planner + owner | M3 |
 | Batas editor navigasi vs struktur tetap | Owner | CMS-014 |
 | Cakupan static search, bahasa, dan dokumen terindeks | Owner + Planner | M4 |
