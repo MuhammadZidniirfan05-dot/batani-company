@@ -1,0 +1,17 @@
+# Acuan: docs/PRD.md §§9.6, 11. Approval owner dan konfigurasi nyata belum ada.
+name: TEMPLATE ONLY - Production disabled
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  disabled:
+    name: Disabled - no production deployment
+    if: ${{ false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    steps:
+      - name: Template diblokir
+        run: echo "Tidak ada deployment. Baca docs/AGENT-WORKFLOW.md."

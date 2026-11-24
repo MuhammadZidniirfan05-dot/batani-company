@@ -1,0 +1,15 @@
+# Tooling validasi M0
+node_modules/
+
+# Kredensial dan konfigurasi lokal
+.env
+.env.*
+!.env.example
+auth.json
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Log lokal
+*.log
