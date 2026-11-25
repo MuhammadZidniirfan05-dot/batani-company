@@ -123,6 +123,14 @@ Planner, Executor, dan Reviewer wajib agent/sesi berbeda. Handoff mencatat ID se
 
 Owner/maintainer mengirim paket handoff secara manual sampai integrasi diverifikasi. Paket minimal: URL Issue, referensi PRD, scope, dependencies, AC, branch/base SHA, PR/head SHA jika ada, hasil CI, risiko, dan temuan terdahulu. Planner/Reviewer mahal hanya dipanggil ketika keputusan atau review substantif diperlukan. Setelah rework, kirim delta dan bukti baru untuk menghindari evaluasi berulang tanpa perubahan.
 
+### Alur kerja manual untuk Issue READY, keputusan owner 2026-11-25
+
+Arahan owner yang dicatat pada [Issue #2](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/2) memperjelas handoff: Planner menyusun Issue kecil dengan AC, dependensi, risiko dan tes menurut [panduan Issue](ISSUE-GUIDELINES.md); owner/maintainer menetapkan READY setelah kontrak dan keputusan yang diperlukan lengkap. Worker pada sesi berbeda membaca Issue, memeriksa branch serta perubahan yang sudah ada, mengerjakan hanya scope, menjalankan pemeriksaan, lalu menyerahkan diff, SHA, hasil dan keterbatasan melalui PR terkait Issue. Pembukaan atau pembaruan PR tetap mengikuti otorisasi penugasan; pekerjaan lokal dapat diserahkan kepada operator tanpa mengklaim PR sudah terbit.
+
+Sebelum tiap tahap, catat peran, ID agent/sesi, ID model dan reasoning aktual bila metadata tersedia. Targetnya Planner/Reviewer `gpt-6-astra` / `high`, Worker `gpt-6.1-sol` / `medium`; ketiga peran memakai sesi terpisah walaupun Planner dan Reviewer memilih model yang sama. Bila model/reasoning yang diketahui tidak cocok, ingatkan owner dengan target dan aktual serta kebutuhan pindah ke sesi/peran yang sesuai. Bila metadata tidak tersedia, tandai **belum terverifikasi** dan minta pemeriksaan pemilih model, tanpa mengarang identitas dari target. Worker tidak menilai implementasinya sendiri sebagai review independen.
+
+Reviewer terpisah memeriksa Issue, diff, AC, keamanan, kerapian dan CI aktual untuk head/base yang berlaku, kemudian memberi `APPROVED`, `CHANGES_REQUESTED`, atau `BLOCKED` menurut [checklist review](REVIEW-CHECKLIST.md). Penolakan menyertakan severity, lokasi, alasan, koreksi, cara verifikasi dan prompt siap salin. Worker memperbaiki branch dan PR yang sama, menjalankan ulang pemeriksaan terdampak, lalu menyerahkan SHA dan bukti baru untuk review ulang. Semua perpindahan status dan handoff ini manual; board Projects hanya mencatat status. Komentar `APPROVED` tidak menerbitkan status `Agent review` dan tidak memberi izin merge. Publisher, isolasi izin, proteksi, serta pembuktian invalidasi head/base yang berubah masih pending.
+
 ## Status dan transisi
 
 Semua status ini mengikuti PRD §9.2. Tidak ada bot yang memindahkannya saat ini. Owner/maintainer mencatat status di Projects atau di Issue bila Projects tidak tersedia.

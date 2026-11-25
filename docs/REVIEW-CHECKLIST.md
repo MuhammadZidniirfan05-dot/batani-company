@@ -4,6 +4,10 @@ Acuan: [PRD](PRD.md) §§9.1, 9.4–9.5, 11, 13. Reviewer memeriksa Issue, PR, d
 
 Planner, Executor, dan Reviewer wajib agent/sesi berbeda; satu akun GitHub diperbolehkan. Catat identitas sesi/model aktual serta reasoning bila tersedia. Pilihan owner adalah Planner/Reviewer `gpt-6-astra` / `high` dan Executor/Worker `gpt-6.1-sol` / `medium` (PRD §§9.1, 13). Bila bukti aktual belum tersedia atau tidak sesuai, nyatakan keterbatasannya sebelum review penerimaan. Laporan agent bukan approval native GitHub atau bukti status `Agent review` sudah aktif.
 
+Sebelum menjalankan peran Reviewer, sebutkan ID sesi, model/reasoning aktual jika tersedia dan bandingkan dengan target. Bila berbeda, ingatkan owner dengan expected/actual dan perpindahan peran/sesi yang diperlukan. Bila metadata tidak tersedia, tulis **belum terverifikasi** dan minta pemeriksaan pemilih model; nama model pada instruksi tidak membuktikan run aktual. Reviewer tidak boleh menjadi sesi Worker yang membuat patch.
+
+Handoff manual sebelum review: Planner menyusun Issue terukur, owner/maintainer menetapkan READY, Worker mengerjakan dan menguji branch, lalu menyerahkan diff dan bukti melalui PR yang diizinkan. Reviewer terpisah memeriksa AC, diff serta CI aktual; bila CHANGES_REQUESTED, Worker memperbaiki Issue dan PR yang sama dan menyerahkan head/base terbaru untuk review ulang. Tidak ada bot atau komentar `APPROVED` yang menggantikan status `Agent review` tepercaya.
+
 ## Urutan review
 
 1. Verifikasi referensi PRD, scope Issue, dependensi, identitas branch, dan SHA yang direview.
@@ -15,6 +19,8 @@ Planner, Executor, dan Reviewer wajib agent/sesi berbeda; satu akun GitHub diper
 ## Checklist
 
 - [ ] Scope dan referensi PRD tepat; tidak ada perubahan requirement diam-diam.
+- [ ] Struktur mengikuti repository/framework; tanggung jawab tiap modul jelas; nama konsisten; tidak ada duplikasi, dead code, berkas sementara atau abstraksi/dependency tanpa kebutuhan dalam scope.
+- [ ] Correctness diperiksa terhadap AC dan jalur gagal yang relevan; format mengikuti tooling yang ada dan tes memeriksa perilaku sesuai risiko.
 - [ ] Bukti sesi/model/reasoning sesuai pilihan owner pada PRD §9.1, dengan setiap peran pada agent/sesi terpisah; konfigurasi target saja tidak memenuhi bukti review penerimaan.
 - [ ] Issue nyata tersedia, atau otorisasi bootstrap Fase 3–4 / integrasi Fase 4.5 dicatat tanpa nomor palsu; persetujuan push diperiksa terpisah.
 - [ ] Acceptance criteria dipetakan ke bukti pada SHA terbaru.
@@ -25,6 +31,7 @@ Planner, Executor, dan Reviewer wajib agent/sesi berbeda; satu akun GitHub diper
 - [ ] Risiko, rollback/dampak data, dan keterbatasan dijelaskan sesuai scope.
 - [ ] Temuan review sebelumnya sudah diperbaiki dan diverifikasi ulang pada PR yang sama.
 - [ ] Gate merge dan production tetap terpisah dari keputusan AI.
+- [ ] Hasil review mengacu head/base terbaru; komentar `APPROVED` tidak dianggap status `Agent review`. Publisher, proteksi, dan isolasi yang belum teruji dinyatakan pending.
 
 ## Format verdict wajib
 
