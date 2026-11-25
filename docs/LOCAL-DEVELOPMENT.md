@@ -48,3 +48,15 @@ git diff --check
 Tes fondasi menguji Blade, escaping nama, HTTP 404 dan health tanpa MySQL. [phpunit.xml](../phpunit.xml) memaksa koneksi SQLite memory dan URL database kosong untuk mencegah pemakaian database lokal pada tes. Ini bukan pengujian integrasi MySQL/CMS. PHPUnit dipilih dari scaffold resmi dan dikunci bersama dependency; belum ada lapisan/service bisnis yang perlu dibuat.
 
 [Laravel CI](../.github/workflows/application.yml) menjalankan image resmi PHP 8.5.12 yang dikunci digest, verifikasi versi runtime, validasi/install/audit Composer, Pint, tes dan build aset pada runner tanpa secret/izin tulis/deployment. Composer 2.10.2 diverifikasi SHA-256 sebelum dipakai. Image dipilih karena setup PHP berbasis paket runner memasang 8.5.13 meskipun input 8.5.12; pemeriksaan exact version berhasil menolak run awal tersebut. [M0 CI](../.github/workflows/ci.yml) tetap menjalankan validator dan simulator. Kelulusan CI bukan penerimaan M0 atau izin merge/deploy.
+
+## Integrasi MySQL CI untuk Issue #10
+
+`php artisan test` tetap menggunakan SQLite memory dan tidak memerlukan MySQL. Suite integrasi terpisah dijalankan hanya dengan perintah berikut pada service MySQL CI sementara:
+
+```text
+php vendor/bin/phpunit --configuration phpunit.mysql.xml --fail-on-empty-test-suite --fail-on-skipped
+```
+
+Job CI memasang MySQL resmi **8.4.7** yang dikunci digest `sha256:0426ec38c7a10aa45ba383887df7878f74ee70e2fd589c7b69207f3577901903`. Service membuat schema `batani_company_ci_test` dan akun `batani_ci_test` khusus schema tersebut; kredensial sintetis hanya berlaku untuk service yang hilang sesudah job, tanpa port host atau volume persisten. Langkah suite mengisi opt-in dan konfigurasi koneksi sementara. Test case memeriksa konfigurasi efektif Laravel, environment testing, tidak adanya cache konfigurasi, dan target service tepat **sebelum** memanggil migration. Koneksi salah, opt-in hilang, atau service mati membuat suite gagal, bukan skip. Migration bawaan hanya berjalan pada service ini; aplikasi pada MySQL Laragon atau hosting belum diuji.
+
+Jangan menjalankan perintah suite MySQL terhadap database existing, sekalipun nama schema tampak serupa. Untuk reproduksi, gunakan run CI pada PR Issue #10 yang menyediakan service sekali pakai. Pengujian lokal default tidak mengubah konfigurasi MySQL/`.env` yang sudah ada.
