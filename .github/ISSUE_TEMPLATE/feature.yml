@@ -1,0 +1,128 @@
+# Acuan: docs/PRD.md §§9.3, 9.6, 13. Hanya template; tidak membuat Issue.
+name: "Usulan fitur"
+description: "Kontrak tugas feature dengan scope, referensi PRD, dan acceptance criteria."
+title: "[feature] "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Baca docs/PRD.md dan docs/ISSUE-GUIDELINES.md dahulu.
+        Template ini tidak mengesahkan scope atau mengubah status menjadi READY.
+        Jangan cantumkan token, kredensial, atau data rahasia.
+  - type: textarea
+    id: prd
+    attributes:
+      label: "Referensi PRD"
+      description: "Sebutkan docs/PRD.md beserta bagian/ID yang relevan dan hubungan requirement dengan tugas."
+      placeholder: "docs/PRD.md §9.6 — ...; FR-... / CMS-... bila relevan"
+    validations:
+      required: true
+  - type: textarea
+    id: business_value
+    attributes:
+      label: "Manfaat pengguna atau bisnis"
+      description: "Jelaskan siapa yang terbantu dan hasil yang dibutuhkan."
+    validations:
+      required: true
+  - type: textarea
+    id: technical_objectives
+    attributes:
+      label: "Tujuan teknis"
+      description: "Nyatakan hasil teknis yang terbatas dan dapat diverifikasi."
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: "Scope yang disetujui"
+      description: "Daftar perubahan yang termasuk tugas ini."
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: "Di luar scope"
+      description: "Tuliskan batas pekerjaan; M0 tidak mencakup aplikasi atau deployment."
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: "Dependensi dan keputusan"
+      description: "Tautkan Issue/keputusan nyata dan statusnya; tulis Tidak ada beserta alasan bila tidak bergantung."
+    validations:
+      required: true
+  - type: textarea
+    id: components
+    attributes:
+      label: "Komponen atau berkas yang diperkirakan"
+      description: "Daftar lokasi yang mungkin disentuh, bukan izin mengubah semua berkas."
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: "Acceptance criteria terukur"
+      description: "Setiap poin menyebut kondisi, hasil teramati, dan bukti keberhasilan."
+      placeholder: "- [ ] Ketika ..., hasil ...; diverifikasi dengan ..."
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: "Rencana pengujian"
+      description: "Perintah/skenario, hasil yang diharapkan, jalur gagal, dan bukti; jangan mengklaim tes sudah dijalankan."
+    validations:
+      required: true
+  - type: textarea
+    id: security_risks
+    attributes:
+      label: "Risiko keamanan dan mitigasi"
+      description: "Jelaskan akses, secret, data, dependency dan rollback sesuai scope; N/A harus disertai alasan."
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Prioritas"
+      options:
+        - "P0 — insiden kritis"
+        - "P1 — menghambat gate"
+        - "P2 — normal"
+        - "P3 — dapat ditunda"
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: "Tingkat risiko"
+      options:
+        - "low"
+        - "medium"
+        - "high"
+    validations:
+      required: true
+  - type: textarea
+    id: agent_owner
+    attributes:
+      label: "Penanggung jawab"
+      description: "Tuliskan Planner, Executor yang ditugaskan, Reviewer terpisah, serta Human Owner. Identitas yang belum ditentukan berarti belum READY."
+    validations:
+      required: true
+  - type: textarea
+    id: definition_of_done
+    attributes:
+      label: "Definition of Done"
+      description: "AC terpenuhi, pemeriksaan aktual lulus, temuan review tuntas, dokumentasi diperbarui; release gate tetap terpisah."
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Konfirmasi kontrak
+      options:
+        - label: Saya telah membaca PRD dan tidak mengubah kebutuhan tanpa keputusan owner.
+          required: true
+        - label: Isi tugas tidak mengandung kredensial dan bukti tidak dikarang.
+          required: true

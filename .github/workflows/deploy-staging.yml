@@ -1,0 +1,17 @@
+# Acuan: docs/PRD.md §§9.6, 11. Tidak mengimplementasikan deployment.
+name: TEMPLATE ONLY - Staging disabled
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  disabled:
+    name: Disabled - no staging deployment
+    if: ${{ false }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    steps:
+      - name: Template diblokir
+        run: echo "Tidak ada deployment. Baca docs/AGENT-WORKFLOW.md."

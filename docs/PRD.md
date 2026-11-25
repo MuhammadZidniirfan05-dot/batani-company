@@ -4,8 +4,8 @@
 | Metadata | Value |
 |---|---|
 | Document ID | PRD-CP-001 |
-| Version | 1.1 |
-| Date | 2026-11-24 |
+| Version | 1.4 |
+| Date | 2026-11-25 |
 | Status | Approved requirements baseline for planning; implementation not started |
 | Project | Company Profile CMS |
 | Repository | New, separate repository (`company-profile-cms` proposed) |
@@ -28,11 +28,11 @@ The development process itself is a first-class requirement: GitHub Issues captu
 Initial acceptance metrics (targets; not current achievements): all mandatory pages reachable from navigation; 100% of public content types editable by permitted CMS users; draft content not publicly accessible; key automated tests passing; staging verified before human-approved production release.
 
 ## 3. Technology and constraints
-- Language: **PHP 8.6 requested target**. This is a hard product preference, but its availability and actual compatibility with Laravel, Filament, Composer packages, required PHP extensions, CI runners and hosting **must be verified before application scaffolding**. Do not assert support or silently downgrade. Document any blockers and present an alternative for the owner's explicit approval.
+- Language: **PHP 8.5.12 approved target**, replacing PHP 8.6 by the owner's explicit decision recorded in §13. This exact version is a hard product preference, but its availability and actual compatibility with Laravel, Filament, Composer packages, required PHP extensions, CI runners and hosting **must be verified before application scaffolding**. Do not assert support or silently change versions. Document any blockers and present an alternative for the owner's explicit approval.
 - Framework: Laravel 13 target, pending the compatibility gate above.
 - Database: MySQL 8.x.
 - CMS: Filament 5 target, pending compatibility verification.
-- Frontend: Laravel Blade, Tailwind CSS, Alpine.js and Vite (implementation deferred).
+- Frontend: Laravel Blade untuk tampilan publik, Tailwind CSS, Alpine.js, dan Vite. Blade sudah tercantum pada baseline dan ditegaskan kembali oleh owner; implementasi tampilan ditunda sampai workflow berjalan dan M0 diterima.
 - Testing: Pest or PHPUnit, selected during architecture phase.
 - Source and work coordination: GitHub repository, Issues, Projects, Pull Requests, Actions, rulesets and environments as supported by actual plan and permissions.
 - Visual direction: **modern, minimalist, responsive**. Detailed UI design **is postponed** until the GitHub workflow foundation is working.
@@ -142,6 +142,18 @@ The exact schema, indexes, constraints and whether publications/studies share on
 
 **Human owner**: approves architecture changes, high-risk changes and release to production. AI review is not equivalent to GitHub branch protection or required human approval.
 
+Planner, Executor, dan Reviewer wajib menggunakan agent/sesi terpisah. Satu akun GitHub boleh digunakan untuk proses proyek; identitas akun GitHub tidak membuktikan pemisahan agent. Review terhadap implementasi sendiri tidak memenuhi gate.
+
+Catat ID agent/sesi untuk setiap peran, ID model yang benar-benar digunakan, serta pengaturan reasoning jika tersedia. Owner telah menyetujui pilihan berikut pada 2026-11-25. Planner, Executor/Worker, dan Reviewer wajib berjalan pada agent/sesi terpisah. Reviewer menggunakan tingkat reasoning dan kelas biaya lebih tinggi daripada Executor berdasarkan pilihan yang disepakati. Penetapan ini merupakan konfigurasi target, bukan bukti model aktual setiap run; identitas model, reasoning, dan pemisahan sesi tetap harus dicatat dan diverifikasi pada handoff serta review penerimaan.
+
+| Peran | Model yang disepakati | Reasoning |
+|---|---|---|
+| Planner | `gpt-6-astra` | `high` |
+| Executor/Worker | `gpt-6.1-sol` | `medium` |
+| Reviewer | `gpt-6-astra` | `high` |
+
+Dasar perbandingan biaya dan batas bukti dicatat pada [AGENT-WORKFLOW](AGENT-WORKFLOW.md). Persetujuan pilihan tidak membuktikan integrasi agent atau gate merge telah operasional.
+
 ### 9.2 Required states
 `BACKLOG → READY → IN_PROGRESS → IN_REVIEW`.
 From review: `CHANGES_REQUESTED → IN_PROGRESS → IN_REVIEW`, or `APPROVED → MERGED → STAGING → PRODUCTION_APPROVAL → DEPLOYED → DONE`; `BLOCKED` may interrupt with recorded reasons. Document who can transition each state and the evidence required.
@@ -152,8 +164,15 @@ Each Issue must specify: title, user/business value, technical objectives, scope
 ### 9.4 Pull Request contract
 Every PR links an Issue and contains implementation summary, changed files, tests with actual outputs, data migration implications, security considerations, limitations and reviewer checklist. Reviewer rejection must include severity, file/location, defect reason, exact fix and verification instructions. Rework the **same PR**, avoiding duplicate tasks.
 
+Laporan Reviewer wajib menyebut repository dan URL PR, head/base SHA yang diperiksa, identitas agent/sesi dan model tiap peran, serta bukti CI aktual untuk head tersebut. CHANGES_REQUESTED juga wajib menyertakan prompt siap salin untuk Executor. Executor memperbaiki branch dan PR yang sama, menjalankan pemeriksaan terdampak, kemudian menyerahkan head terbaru untuk review ulang.
+
+APPROVED dalam laporan agent bukan approval native GitHub dan belum membuktikan kontrol merge aktif. CI dan hasil review yang berlaku untuk commit lama tidak mengizinkan merge commit baru. Perubahan head atau base membatalkan kelayakan sebelumnya sampai pemeriksaan dan review yang relevan diulang.
+
 ### 9.5 GitHub requirements
 - New repository; protected `main` with required PR and checks wherever supported.
+- Target kontrol merge: PR wajib menuju main, CI `M0 validation` dan status `Agent review` wajib lulus, branch mengikuti base terbaru, percakapan review terselesaikan, aturan berlaku termasuk admin, serta force-push dan penghapusan main dilarang.
+- Approval native GitHub dari akun lain tidak menjadi persyaratan proyek: jumlah required approval native direncanakan 0, tanpa kewajiban approval code owner atau approval atas push terakhir. Persetujuan teknis diwujudkan melalui hasil Reviewer agent terpisah yang diverifikasi dan diterbitkan sebagai status `Agent review` pada commit yang diperiksa.
+- Status review hanya boleh diterbitkan oleh owner atau publisher tepercaya setelah memverifikasi identitas sesi/peran, model, repository/PR, head/base SHA, dan CI. Executor tidak boleh menerbitkan kelulusan review. Integrasi, pemisahan kredensial, invalidasi hasil usang, dan pengujian penolakan masih diperlukan; komentar atau dokumentasi saja tidak membuat gate operasional.
 - Labels for type (`feature`, `bug`, `chore`), module, priority, risk and agent responsibility.
 - GitHub Projects board for workflow states if supported.
 - Issue Forms, PR template, `AGENTS.md`, architectural docs, CI and deploy workflow templates.
@@ -187,12 +206,22 @@ Every PR links an Issue and contains implementation summary, changed files, test
 ## 11. Definition of Done and release gates
 A feature is considered complete only when it meets the Issue acceptance criteria, tests and security checks have run and passed (with evidence), reviewer findings are resolved, and relevant documentation is updated. Merge requires branch protections/checks actually configured. Production release requires separate human authorization, backups and rollback readiness. An AI comment saying `APPROVED` never by itself authorizes production deployment.
 
+Merge layak dipertimbangkan hanya setelah kontrol repository aktif dan diverifikasi, CI terbaru lulus, serta Reviewer agent terpisah memberikan APPROVED yang diterbitkan secara tepercaya sebagai status `Agent review` untuk head/base yang masih berlaku. Status hilang, usang, gagal, BLOCKED, atau belum terverifikasi harus menahan merge. Pengujian kontrol harus membuktikan CI gagal, review ditolak, hasil hilang/usang, dan upaya pemalsuan atau pemakaian ulang hasil tidak membuka gate. Seluruh kondisi lulus membuat PR layak untuk keputusan merge oleh pihak berwenang; tidak memberikan izin deployment atau fase berikutnya.
+
 ## 12. Out of scope for M0 and unresolved decisions
 Out of M0: UI design, public pages, business content entry, physical schema creation, paid search infrastructure, deployment execution.
 
-Unresolved and to be verified/documented by Planner: PHP 8.6 support by the selected framework/dependencies/host; GitHub account plan and supported required checks/environment approvals; AI runner/model integrations and their costs; target production hosting; real company name/logo/content; editorial governance for document publication; whether combined Publications & Studies use one model or two models behind one menu. Do not block M0 documentation for unresolved later-stage choices.
+Unresolved and to be verified/documented by Planner: PHP 8.5.12 support by the selected framework/dependencies/host; GitHub account plan and supported required checks/environment approvals; AI runner/model integrations and their costs; target production hosting; real company name/logo/content; editorial governance for document publication; whether combined Publications & Studies use one model or two models behind one menu. Do not block M0 documentation for unresolved later-stage choices.
 
 ## 13. Change control and precedence
-This PRD is the authoritative product requirements baseline. The latest explicit owner decisions override previous drafts: **PHP 8.6 as target, a new repository, a combined “Publikasi dan Kajian” submenu, Project IT inside Publikasi, and workflow implementation before design**.
+This PRD is the authoritative product requirements baseline. The latest explicit owner decisions override previous drafts: **PHP 8.5.12 as target, a new repository, a combined “Publikasi dan Kajian” submenu, Project IT inside Publikasi, and workflow implementation before design**.
+
+Owner decision, 2026-11-24 (version 1.2): the instruction “oiya saya ingin untuk phpnya veri 8.5 12” specifies PHP **8.5.12** as the replacement for the previous PHP 8.6 target. This is an approved target change, not a temporary workaround. It authorizes aligning the requirements and M0 documentation; it does not accept the compatibility gate, authorize application scaffolding or Phase 5, or grant merge/deployment approval. Earlier audit records refer to their historical baseline.
+
+Keputusan owner 2026-11-25 (versi 1.3): “untuk akun github yang sama itu tidak masalah”. Owner menetapkan Planner, Executor, dan Reviewer sebagai agent terpisah, dengan Reviewer menggunakan model pada tingkat reasoning dan kelas biaya lebih tinggi daripada Executor. Setelah review dan CI untuk perubahan terbaru lulus, PR baru layak dipertimbangkan untuk merge. Bila belum lulus, Reviewer memberikan alasan serta prompt koreksi untuk Executor pada PR yang sama.
+
+Keputusan ini menggantikan usulan sebelumnya yang mewajibkan satu approval native dari akun GitHub lain. Satu akun GitHub diperbolehkan; pemisahan peran, bukti review, CI, dan gate merge tetap wajib. Pada saat keputusan v1.3 dicatat, pemilihan model dan integrasi penerbitan status belum selesai. Perubahan ini mengizinkan penyelarasan dokumentasi M0, tanpa izin mengaktifkan proteksi, push, merge, deploy, atau memulai Fase 5.
+
+**2026-11-25 — Persetujuan model/peran dan penegasan Blade (v1.4).** Owner menyatakan “oke saya setuju” atas rekomendasi Planner dan Reviewer menggunakan `gpt-6-astra` dengan reasoning `high`, serta Executor/Worker menggunakan `gpt-6.1-sol` dengan reasoning `medium`, masing-masing pada agent/sesi terpisah. Owner juga menyatakan “untuk tampilan kita pakenya blade ya” dan mengarahkan agar implementasi tampilan ditunda sampai workflow berjalan dan M0 diterima. Keputusan ini menegaskan Blade yang sudah ada pada baseline dan mengizinkan penyelarasan dokumentasi M0; tidak mengizinkan scaffolding, implementasi aplikasi, atau Fase 5. Pemilihan model telah selesai, sedangkan bukti penerapan per run, publisher status `Agent review` tepercaya, isolasi kredensial, dan verifikasi proteksi/gate GitHub masih belum operasional. Target PHP 8.5.12 serta gate kompatibilitas Laravel 13 dan Filament 5 tetap berlaku.
 
 Planner may elaborate architecture and issue detail but may not silently alter these decisions. Proposed deviations must be recorded as a decision request and approved by the owner. Issues and PRs must reference this PRD and relevant section IDs.
