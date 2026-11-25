@@ -1,5 +1,7 @@
 # Runbook GitHub dan alur agent
 
+**Penugasan aktif v1.7:** owner mengizinkan mulai fondasi Laravel [Issue #8](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/8), termasuk Worker kelas mahal (target proyek Astra/high). Larangan mulai aplikasi pada snapshot sebelumnya tidak berlaku untuk scope ini. [Panduan lokal](LOCAL-DEVELOPMENT.md) memuat perintah nyata. Penerimaan M0, gate merge, metadata aktual dan deployment tetap terpisah; worker murah tetap pola default di luar pengecualian penugasan ini.
+
 Acuan: [PRD](PRD.md) §§2, 9, 11–13; [AGENTS](../AGENTS.md). Inspeksi terbaru: 2026-11-25. Repository sudah public; proteksi main belum dikonfigurasi. Keputusan terbaru v1.6 memperbolehkan Planner → Worker dalam chat yang sama, dengan Reviewer di chat lain. Pemilihan model telah disepakati; penerapan dan bukti per run, integrasi status review tepercaya, serta isolasi kredensial masih pending. Draft PR dan CI pada head remote terverifikasi; integrasi agent belum operasional.
 
 **Aturan aktif v1.6:** ikuti [handoff satu chat](#handoff-satu-chat-dan-prompt) dan [standar kualitas](ARCHITECTURE.md#clean-architecture-dan-clean-code). Catatan keputusan/bootstrap bertanggal di bawah menyimpan kondisi saat itu; kewajiban lama memisahkan sesi Planner dan Worker telah diganti. Reviewer tetap chat lain, target model tetap sesuai tahap, dan pergantian model dilakukan melalui pemilih model, bukan teks prompt.

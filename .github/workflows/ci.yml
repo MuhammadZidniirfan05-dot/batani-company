@@ -37,5 +37,7 @@ jobs:
         run: npm ci --prefix .github/validation --ignore-scripts --no-audit --no-fund
       - name: Validasi dokumen, YAML, dan pengaman workflow
         run: node .github/validation/validate.mjs
+      - name: Uji aturan validator
+        run: node --test .github/validation/validate.test.mjs
       - name: Uji simulator offline Agent review
         run: node --permission --allow-fs-read=tools/agent-review tools/agent-review/test/policy.test.mjs

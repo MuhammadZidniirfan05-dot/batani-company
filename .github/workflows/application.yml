@@ -1,0 +1,58 @@
+name: Laravel CI
+
+on:
+  pull_request:
+    branches: [main, 'chore/**', 'feature/**']
+  push:
+    branches: [main, 'feature/**', 'fix/**', 'chore/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: laravel-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  application:
+    name: Laravel validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Setup PHP target
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        with:
+          php-version: '8.5.12'
+          extensions: mbstring, dom, fileinfo, intl, pdo_mysql, pdo_sqlite
+          tools: composer:2.10.2
+          coverage: none
+      - name: Verify exact PHP version
+        run: |
+          php -r "exit(PHP_VERSION === '8.5.12' ? 0 : 1);"
+      - name: Validate and install locked dependencies
+        run: |
+          composer validate --strict
+          composer install --no-interaction --prefer-dist --no-progress --no-plugins
+          composer check-platform-reqs
+          composer audit
+      - name: Prepare isolated application environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+      - name: Check code style
+        run: vendor/bin/pint --test
+      - name: Test application
+        run: php artisan test
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Build locked frontend assets
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run build

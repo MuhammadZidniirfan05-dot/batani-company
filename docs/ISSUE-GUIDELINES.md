@@ -1,5 +1,7 @@
 # Kontrak GitHub Issue
 
+**Pengecualian aktif PRD v1.7:** owner secara langsung menetapkan fondasi Laravel Issue #8 untuk dikerjakan sekarang, sebelum penerimaan formal M0 selesai, dengan Executor kelas mahal. Pembatasan READY aplikasi di bawah tidak membatalkan penugasan spesifik ini; scope lain tetap mengikuti dependensi dan otorisasi masing-masing.
+
 Acuan: [PRD](PRD.md) §§8, 9.3, 9.6, 11, 13. Fase 3–4 dahulu hanya menyiapkan dokumen/form; izin penuh workflow pada v1.5 dan handoff v1.6 kini berlaku untuk Issue workflow yang ditugaskan.
 
 ## Isi wajib

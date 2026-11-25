@@ -1,13 +1,14 @@
 // PRD §§9.3–9.6, 11: pemeriksaan fondasi, bukan tes aplikasi atau audit menyeluruh.
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { existsSync, lstatSync, readFileSync, statSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseDocument } from 'yaml';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-// PRD v1.6, §13: keputusan owner tentang handoff satu chat dan standar kualitas.
-const expectedPrdHash = '97be0cd26d4c85b8ea955ee6fe8fdaf8cd69a4c50d745f7eaaab1a6af5f1b668';
+// PRD v1.7, §13: owner mengizinkan fondasi Laravel awal dengan agent mahal.
+const expectedPrdHash = 'a3139b96e54a4846124ff39288fc4bd0bf1e2de0cd92631fddfe77580316c573';
 const documents = [
   'AGENTS.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-WORKFLOW.md',
   'docs/ROADMAP.md', 'docs/ISSUE-GUIDELINES.md', 'docs/REVIEW-CHECKLIST.md',
@@ -70,7 +71,7 @@ export function validateIssue(form, kind) {
   requireThat(fields.get('acceptance_criteria').type === 'textarea', 'AC harus berupa textarea');
 }
 
-export function validateWorkflow(workflow, deployment = false) {
+export function validateWorkflow(workflow, deployment = false, application = false) {
   requireThat(typeof workflow.name === 'string', 'Nama workflow wajib');
   requireThat(workflow.on && typeof workflow.on === 'object', 'Trigger YAML 1.2 wajib');
   requireThat(!('pull_request_target' in workflow.on), 'pull_request_target dilarang dalam fondasi M0');
@@ -83,9 +84,10 @@ export function validateWorkflow(workflow, deployment = false) {
     requireThat(JSON.stringify(workflow.permissions) === JSON.stringify({ contents: 'read' }), 'CI harus memakai contents: read saja');
     requireThat(workflow.on.pull_request?.branches?.includes('main'), 'CI PR harus mencakup main');
     requireThat(workflow.on.push && 'workflow_dispatch' in workflow.on, 'Trigger push/manual wajib');
-    requireThat(Object.keys(workflow.jobs).length === 1, 'M0 hanya mempunyai satu job validasi');
-    requireThat(workflow.jobs.validate?.name === 'M0 validation', 'Nama required check tidak sesuai runbook');
-    requireThat(!workflow.jobs.validate.if && !workflow.jobs.validate['continue-on-error'], 'Required job tidak boleh dilewati/diabaikan');
+    requireThat(Object.keys(workflow.jobs).length === 1, 'Setiap CI mempunyai satu job validasi');
+    const job = application ? workflow.jobs.application : workflow.jobs.validate;
+    requireThat(job?.name === (application ? 'Laravel validation' : 'M0 validation'), 'Nama check tidak sesuai runbook');
+    requireThat(!Object.hasOwn(job, 'if') && !job['continue-on-error'], 'Required job tidak boleh dilewati/diabaikan');
     for (const event of ['push', 'pull_request']) {
       requireThat(!workflow.on[event].paths && !workflow.on[event]['paths-ignore'], 'Path filter dapat menghilangkan required check');
     }
@@ -103,33 +105,52 @@ export function validateWorkflow(workflow, deployment = false) {
     }
     for (const step of job.steps) {
       if (step.uses) {
-        requireThat(/^actions\/(checkout|setup-node)@[a-f0-9]{40}$/.test(step.uses), 'Action harus dikunci SHA 40 karakter dan sesuai allowlist M0');
+        const actionPattern = application
+          ? /^(actions\/(checkout|setup-node)|shivammathur\/setup-php)@[a-f0-9]{40}$/
+          : /^actions\/(checkout|setup-node)@[a-f0-9]{40}$/;
+        requireThat(actionPattern.test(step.uses), 'Action harus dikunci SHA 40 karakter dan sesuai allowlist');
         if (step.uses.startsWith('actions/checkout@')) {
           requireThat(step.with?.['persist-credentials'] === false, 'Checkout tidak boleh menyimpan kredensial');
         }
       }
       if (step.run) {
         requireThat(!step.run.includes('${{'), 'Jangan interpolasi ekspresi GitHub ke shell M0');
-        requireThat(!/artisan|composer\s+(install|update)|npm\s+run\s+build/.test(step.run), 'CI M0 tidak menjalankan aplikasi yang belum ada');
+        if (!application) requireThat(!/artisan|composer\s+(install|update)|npm\s+run\s+build/.test(step.run), 'CI M0 tetap terpisah dari tes aplikasi');
       }
+      requireThat(!step['continue-on-error'], 'Kegagalan step tidak boleh diabaikan');
     }
   }
   if (!deployment) {
-    const steps = workflow.jobs.validate.steps;
+    const steps = (application ? workflow.jobs.application : workflow.jobs.validate).steps;
     requireThat(steps.some((step) => step.uses?.startsWith('actions/checkout@')), 'Checkout wajib');
     requireThat(steps.some((step) => step.uses?.startsWith('actions/setup-node@') && step.with?.['node-version'] === '24'), 'Node 24 wajib untuk validator');
-    requireThat(steps.some((step) => step.run === 'npm ci --prefix .github/validation --ignore-scripts --no-audit --no-fund'), 'Install validator dari lockfile wajib');
-    requireThat(steps.some((step) => step.run === 'node .github/validation/validate.mjs'), 'Validator wajib dijalankan');
+    if (application) {
+      requireThat(steps.some((step) => step.uses?.startsWith('shivammathur/setup-php@') && step.with?.['php-version'] === '8.5.12'), 'CI aplikasi wajib PHP 8.5.12');
+      const requiredRuns = [
+        `php -r "exit(PHP_VERSION === '8.5.12' ? 0 : 1);"`,
+        'composer validate --strict\ncomposer install --no-interaction --prefer-dist --no-progress --no-plugins\ncomposer check-platform-reqs\ncomposer audit',
+        'vendor/bin/pint --test',
+        'php artisan test',
+        'npm ci --ignore-scripts --no-audit --no-fund\nnpm run build',
+      ];
+      for (const command of requiredRuns) {
+        requireThat(steps.some((step) => !Object.hasOwn(step, 'if') && !Object.hasOwn(step, 'shell') && step.run?.trim() === command), `Pemeriksaan aplikasi wajib tanpa bypass: ${command}`);
+      }
+    } else {
+      requireThat(steps.some((step) => step.run === 'npm ci --prefix .github/validation --ignore-scripts --no-audit --no-fund'), 'Install validator dari lockfile wajib');
+      requireThat(steps.some((step) => step.run === 'node .github/validation/validate.mjs'), 'Validator wajib dijalankan');
+    }
   }
 }
 
-function walk(directory) {
-  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if (['.git', 'node_modules'].includes(entry.name)) return [];
-    const path = resolve(directory, entry.name);
-    if (entry.isSymbolicLink()) return [];
-    return entry.isDirectory() ? walk(path) : [path];
-  });
+export function sourceFiles(directory) {
+  // Inspect repository source, not ignored vendor files or local secret/runtime files.
+  // Tracked sensitive filenames remain included even if an ignore rule matches them.
+  const names = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z'], {
+    cwd: directory, encoding: 'utf8', maxBuffer: 10 * 1024 * 1024,
+  }).split('\0').filter(Boolean);
+  return [...new Set(names)].map((name) => resolve(directory, name))
+    .filter((path) => existsSync(path) && lstatSync(path).isFile());
 }
 
 export function validateLinks(source, file, base = root) {
@@ -161,13 +182,13 @@ export function main() {
   for (const file of documents) {
     check(`PRD reference ${file}`, () => requireThat(readFileSync(resolve(root, file), 'utf8').includes('PRD.md'), 'Dokumen harus merujuk PRD'));
   }
-  for (const path of walk(root)) {
+  for (const path of sourceFiles(root)) {
     const file = relative(root, path).split(sep).join('/');
     if (/\.ya?ml$/.test(file)) {
       check(`YAML and contract ${file}`, () => {
         const yaml = parseYaml(readFileSync(path, 'utf8'));
         if (file.startsWith('.github/ISSUE_TEMPLATE/')) validateIssue(yaml, file.split('/').at(-1).replace(/\.ya?ml$/, ''));
-        if (file.startsWith('.github/workflows/')) validateWorkflow(yaml, file.includes('/deploy-'));
+        if (file.startsWith('.github/workflows/')) validateWorkflow(yaml, file.includes('/deploy-'), file === '.github/workflows/application.yml');
       });
     }
     if (file.endsWith('.md')) check(`local links ${file}`, () => validateLinks(readFileSync(path, 'utf8'), path));

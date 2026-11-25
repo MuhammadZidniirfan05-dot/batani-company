@@ -2,6 +2,8 @@
 
 Acuan: [PRD](docs/PRD.md) §§3, 9, 11, 13. Berlaku untuk seluruh repository dan semua model AI.
 
+**Otorisasi aktif v1.7:** owner telah meminta mulai membangun Laravel melalui [Issue #8](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/8), dengan Executor kelas mahal (target proyek `gpt-6-astra/high`). Fondasi aplikasi lokal, Blade awal, konfigurasi MySQL, tes dan CI diizinkan sekarang. Ini menggantikan larangan scaffolding/Fase 5 dan target Worker murah di bawah hanya untuk penugasan ini. Gate merge/deploy, preservasi, keamanan, review terpisah serta kejujuran bukti tetap wajib; M0 tidak otomatis diterima. Jangan meminta ulang izin memulai scope Laravel ini.
+
 ## Sebelum bekerja
 
 1. Baca seluruh [PRD](docs/PRD.md), [README](README.md), berkas ini, dan GitHub Issue yang ditugaskan. Periksa acceptance criteria, dependensi, risiko, dan batas scope.
@@ -54,7 +56,7 @@ Acuan: [PRD](docs/PRD.md) §§3, 9, 11, 13. Berlaku untuk seluruh repository dan
   git diff --check
   ```
 
-- Paket Node tersebut hanya tooling validasi M0, bukan scaffolding frontend. Belum ada perintah tes Laravel atau build aplikasi yang dapat dijalankan.
+- Paket Node di `.github/validation` tetap tooling M0. Setelah scaffold Issue #8 tersedia, jalankan juga Composer validate/platform check/audit, Pint, tes Laravel dan build frontend sesuai [panduan lokal](docs/LOCAL-DEVELOPMENT.md). Gunakan PHP 8.5.12 secara eksplisit bila PATH berbeda; jangan menjalankan migrasi pada database existing tanpa penugasan.
 - Catat perintah, versi runtime, hasil/exit code, keterbatasan, dan commit yang diperiksa. Log lokal tidak boleh disebut hasil GitHub Actions.
 - Gunakan [template PR](.github/PULL_REQUEST_TEMPLATE.md), tautkan Issue nyata saat tersedia, referensi bagian PRD, scope, risiko, dan bukti. Ikuti [checklist review](docs/REVIEW-CHECKLIST.md).
 - Jika CHANGES_REQUESTED, perbaiki branch dan PR yang sama, jalankan ulang pemeriksaan terdampak, lalu minta review pada commit terbaru.

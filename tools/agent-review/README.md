@@ -1,5 +1,7 @@
 # Simulator offline Agent review — F1, Issue #4
 
+Simulator ini memodelkan kebijakan v1.6. Pengecualian owner v1.7 untuk Worker mahal pada fondasi Laravel Issue #8 belum dimodelkan; jangan memakai hasil F1 sebagai penerimaan identitas/model atau gate penugasan tersebut. Workflow nyata tetap memerlukan bukti operator/Reviewer yang terpisah.
+
 Modul ini menyiapkan evaluasi kebijakan dan lifecycle sintetis berdasarkan
 [PRD](../../docs/PRD.md) §§9.1, 9.4, 9.5, dan 11. Modul tidak mengakses GitHub,
 menerbitkan status, memverifikasi tanda tangan kriptografis, menjalankan
