@@ -206,9 +206,65 @@ Langkah berikut sesuai PRD §§9.1, 9.5, 11 adalah menerapkan pilihan model/pera
 | Risk | `risk:low` (perubahan terbatas), `risk:medium` (perilaku/dependensi), `risk:high` (izin, data, requirement, release) |
 | Responsibility | `agent:planner`, `agent:executor`, `agent:reviewer`, `owner:decision` |
 
-Admin membuat label sebelum menggunakan form. Form memberi label tipe; module/priority/risk/agent dipetakan manual dari jawaban dan penugasan. Tidak ada sinkronisasi otomatis.
+Label pada tabel sudah tersedia sesuai bukti M0-D di bawah. Form memberi label tipe; module/priority/risk/agent dipetakan manual dari jawaban dan penugasan. Tidak ada sinkronisasi otomatis. Form masih berada pada branch PR, sehingga ketersediaan label tidak membuktikan form sudah aktif pada default branch.
 
 Buat Projects board dengan field Status berisi BACKLOG, READY, IN_PROGRESS, IN_REVIEW, CHANGES_REQUESTED, APPROVED, MERGED, STAGING, PRODUCTION_APPROVAL, DEPLOYED, DONE, BLOCKED. Tambahkan field Priority, Risk, Module, Agent owner, PRD reference, dan Dependencies. Gunakan transisi pada tabel di atas; jangan auto-close saat merge karena state release belum selesai. Jika Projects tidak didukung, gunakan riwayat status dalam Issue sebagai fallback terdokumentasi, bukan mengklaim board tersedia.
+
+#### Bukti konfigurasi M0-D, 2026-11-25
+
+Owner meminta melanjutkan tugas berikutnya tanpa mengulang review paket dokumentasi yang telah dikerjakan. Dalam penugasan ini review ulang tidak dijalankan dan tidak diterbitkan verdict APPROVED. Pekerjaan dilanjutkan ke label dan persiapan Projects sesuai PRD §§9.2–9.5; instruksi tersebut tidak memerintahkan merge, deployment, atau Fase 5. PR #1 tetap draft pada head `38a670a0f5b891a2a4dbbe858eee760c84e9d76a` saat pekerjaan dimulai.
+
+Planner/operator menjalankan konfigurasi administratif label; tidak ada implementasi aplikasi atau pemanggilan Reviewer tambahan. Hasil aktual:
+
+| Pemeriksaan / tindakan | Hasil | Batas bukti |
+|---|---|---|
+| Metadata repository resmi | PUBLIC; akses ADMIN; default branch main | Akses repository tidak membuktikan izin Projects |
+| Daftar label sebelum perubahan | 10 label, termasuk `bug`; `feature` dan `chore` belum tersedia | Tidak mengubah atau menghapus label lama |
+| Pembuatan label yang belum ada | 19 pemanggilan `gh label create` berhasil, tanpa `--force` | Seluruh 20 nama label target tersedia; total repository menjadi 29 |
+| Pembacaan ulang dan perbandingan metadata label | 20/20 nama target tersedia; 10/10 label lama mempertahankan nama, warna, dan deskripsi; 19 label baru sesuai konfigurasi | Verifikasi API, bukan GitHub Actions atau simulasi Issue |
+| `gh project list --owner MuhammadZidniirfan05-dot --format json --limit 30` | Exit 1: token tidak memiliki scope `read:project` | Keberadaan board belum diketahui; tidak ada board/field/transisi yang dibuat atau diverifikasi |
+
+Skrip pembuatan selesai menambahkan label, kemudian pemeriksaan awal gagal akibat penanganan array PowerShell. Pembacaan ulang sempat mengalami TLS timeout; pemeriksaan ulang yang diizinkan kemudian berhasil dan perbandingan JSON memberi hasil di atas. Tidak ada pembuatan label ulang, penghapusan, atau perubahan label lama untuk mengatasi kegagalan pemeriksaan tersebut.
+
+M0-D **selesai sebagian**: label aktif; Projects, field/status, simulasi transisi, ownership item, dan keputusan closure DONE untuk dokumentasi masih pending. Tidak dibuat Issue atau item percobaan. Catatan ini merupakan pembaruan lokal setelah head di atas, bukan klaim commit/push atau CI baru.
+
+Untuk menyiapkan akses baca/tulis Projects, owner/operator dapat menjalankan perintah berikut secara interaktif, sesuai [manual GitHub CLI Projects](https://cli.github.com/manual/gh_project) dan [auth refresh](https://cli.github.com/manual/gh_auth_refresh). Scope `project` diperlukan untuk pengelolaan board; `read:project` saja hanya mencukupi pembacaan. Penambahan scope belum dilakukan oleh agent.
+
+```powershell
+gh auth refresh --hostname github.com --scopes project
+```
+
+Setelah owner menyetujui akses melalui alur autentikasi GitHub, periksa daftar Projects kembali. Pilih board yang sesuai bila sudah ada; buat board proyek hanya bila belum ada. Gunakan seluruh status dan field pada rancangan di atas, pertahankan data yang sudah ada, serta verifikasi konfigurasi aktual. Kredensial operator tetap tidak diberikan kepada Executor; jangan menyalin token ke Issue, chat, atau repository. Pembuatan Issue, perubahan proteksi, merge, deployment, dan Fase 5 tetap di luar tugas ini.
+
+#### Tindak lanjut Projects M0-D setelah otorisasi, 2026-11-25
+
+Bagian ini memperbarui status akses pada snapshot label di atas. Owner menyatakan CLI telah tersambung; pemeriksaan awal masih hanya menemukan scope `gist`, `read:org`, `repo`, dan `workflow`. Alur `gh auth refresh --hostname github.com --scopes project` kemudian diselesaikan owner melalui GitHub. CLI mengembalikan `Authentication complete` (exit 0), dan pembacaan serta mutasi Projects melalui API berhasil. Tidak ada token atau kode autentikasi disimpan di repository.
+
+Operator adalah agent `/root`, sesi `13eb689f-1308-4139-9958-5fe081dfa273`. Metadata sesi tidak mengekspos model/reasoning aktual; pilihan model pada baseline tidak dipakai sebagai bukti run. Tugas ini konfigurasi administratif yang diizinkan owner, bukan implementasi Worker atau review independen. Kredensial operator tidak dibagikan kepada Worker.
+
+Daftar seluruh Projects milik owner, termasuk yang closed, awalnya berisi satu board tanpa item yang tertaut ke repository lain. Repository resmi belum memiliki Projects tertaut. Board lama dipertahankan; dibuat [Batani Company — Development Workflow](https://github.com/users/MuhammadZidniirfan05-dot/projects/2), nomor `2`, ID `PVT_kwHOCkfJyc4BtHab`, private dan terbuka, dengan repository resmi `MuhammadZidniirfan05-dot/batani-company` sebagai satu-satunya repository tertaut. Board private dapat dibuka oleh owner yang sudah login.
+
+| Konfigurasi | Hasil pembacaan ulang API |
+|---|---|
+| Status, single-select | BACKLOG, READY, IN_PROGRESS, IN_REVIEW, CHANGES_REQUESTED, APPROVED, MERGED, STAGING, PRODUCTION_APPROVAL, DEPLOYED, DONE, BLOCKED; urutan, warna, dan deskripsi sesuai rencana |
+| Priority, single-select | P0, P1, P2, P3 |
+| Risk, single-select | low, medium, high |
+| Module, single-select | workflow, runtime, cms, public, search-contact-seo, release |
+| Agent owner, PRD reference, Dependencies | Tiga field TEXT; petunjuk pengisian tercantum pada README board |
+| Field bawaan | Dipertahankan; total 19 field setelah penambahan enam field khusus |
+| View `Alur kerja — Status` | `BOARD_LAYOUT`, filter kosong, `verticalGroupByFields` menunjuk Status |
+| README board | Referensi baseline PRD/runbook dan tabel seluruh transisi, pihak berwenang, bukti, serta batas manual; pembacaan ulang cocok dengan teks yang dikirim |
+| Otomatisasi bawaan board baru | Enam aturan dihapus sebelum penggunaan; API `workflows.totalCount: 0` |
+| Item board Batani | `items.totalCount: 0`; tidak membuat Issue, draft Issue, atau item percobaan |
+| Board lama | Metadata, field/opsi/ID, view, workflows, repository tertaut dan item identik dengan snapshot sebelum konfigurasi |
+
+Aturan bawaan yang dihapus hanya pada board baru: Auto-add sub-issues to project, Auto-close issue, Item added to project, Item closed, Pull request linked to issue, dan Pull request merged. Tidak ada penutupan Issue atau perpindahan ke DONE otomatis saat PR ditutup/merge. Penghapusan konfigurasi memakai API resmi `deleteProjectV2Workflow`; tidak menghapus board, item, Issue, commit, atau branch.
+
+Pembacaan GraphQL memverifikasi 12/12 pemeriksaan konfigurasi dan preservasi, termasuk pagination lengkap, status/field, repository tertaut, visibility, layout/kolom, README, jumlah workflows/item, dan kesamaan board lama. Satu permintaan metadata awal ditolak saat validasi schema karena nama field payload view keliru; schema API diperiksa, permintaan dikoreksi menjadi `projectV2View`, lalu berhasil dan dibaca ulang. Ini bukti API, bukan hasil GitHub Actions atau uji alur tugas end-to-end. Browser terintegrasi tidak memiliki sesi login; tampilan visual tidak diklaim teruji.
+
+Referensi platform: [GraphQL Projects](https://docs.github.com/en/graphql/reference/projects) dan [konfigurasi board](https://docs.github.com/en/issues/planning-and-tracking-with-projects/customizing-views-in-your-project/customizing-the-board-layout). Pilihan kolom mengatur nilai Status; tidak memvalidasi urutan, peran, atau bukti suatu transisi. Semua transisi, pemetaan label, penugasan agent dan pemeriksaan bukti tetap manual mengikuti tabel runbook. Belum ada integrasi agent, publisher `Agent review`, atau kontrol izin per transisi yang terverifikasi.
+
+Konfigurasi board M0-D sudah tersedia; penerimaan M0-D tetap sebagian karena simulasi dengan tugas nyata, ownership item, dan keputusan closure dokumentasi masih pending. Owner/maintainer perlu menetapkan aturan DONE untuk pekerjaan tanpa deployment sebelum kasus tersebut ditutup; jangan memalsukan STAGING/DEPLOYED. Penugasan ini tidak membuat Issue, mengubah proteksi, merge, deploy, atau memulai Fase 5. PRD/README proyek tidak diubah; dua perubahan dokumentasi lokal sebelumnya dipertahankan dan catatan ini ditambahkan pada branch yang sama, tanpa commit/push.
 
 ### Environment dan rilis
 
@@ -223,3 +279,11 @@ GitHub membatasi required environment reviewers di repository private menurut pl
 Belum ada GitHub App, webhook, pemanggilan model dari workflow repository, dispatcher, maupun reviewer bot. Sebelum menyebut alur otomatis: gunakan identitas/model yang disepakati, catat bukti aktual, dan tentukan budget, scope API minimal (contents/PR/Issues hanya sesuai tugas, Projects bila perlu), pengelolaan secret, sandbox terpisah, timeout/retry, idempotensi agar tidak membuat Issue/PR duplikat, dan log audit yang sudah diredaksi. Jangan memberikan administrasi repository atau production credential kepada Executor.
 
 Bukti penerimaan nanti: satu Issue nyata yang diizinkan owner menghasilkan branch/PR, CI pada SHA yang benar, review, satu koreksi pada PR yang sama, lalu review ulang. Catat siapa menjalankan tiap langkah, izin, hasil, dan biaya. Tidak perlu deployment untuk membuktikan loop pengembangan tersebut; release tetap gate terpisah. Backlog usulan ada di [ROADMAP](ROADMAP.md); Fase 5 belum diizinkan.
+
+## Rancangan penyelesaian M0-D dan M0-F, 2026-11-25
+
+[Rencana penerimaan dan publisher](M0-D-M0-F-PLAN.md) merinci usulan closure dokumentasi D-DEC-1/2, simulasi transisi, pemisahan kredensial, kontrak bukti, pengikatan head/base/test merge, 24 skenario pengujian, acceptance criteria dan prompt Worker. Acuan: PRD §§9.2–9.5, 11, 13. Statusnya DRAFT; tidak menggantikan tabel transisi atau persetujuan kebutuhan yang berlaku.
+
+Pemeriksaan baca API pada tugas Planner mengonfirmasi board #2 masih mempunyai 12 status, enam field pendukung, kolom Status, 0 workflows dan 0 item. PR #1 tetap draft pada head `38a670a`; main tidak protected dan rulesets kosong. CI remote lulus untuk head tersebut, bukan perubahan lokal terbaru. Tidak ada konfigurasi GitHub yang diubah pada tugas Planner ini.
+
+D-DEC-1 hanya usulan MERGED → DONE untuk dokumentasi murni setelah seluruh gate/bukti terpenuhi dan owner menyetujuinya. PR #1 berisi workflow/validator sehingga tidak otomatis memenuhi kategori itu. Usulan publisher dengan GitHub App dan target test merge commit masih perlu keputusan owner serta pembuktian native; status pada head saja, webhook, atau polling tidak membuktikan kelulusan lama sudah tidak berlaku. Paket Worker awal dibatasi simulator offline, belum READY tanpa penugasan yang sah dan lingkungan terisolasi. Tidak ada izin Issue, aktivasi integrasi/proteksi, push, merge, deploy atau Fase 5.
