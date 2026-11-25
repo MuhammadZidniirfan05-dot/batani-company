@@ -19,6 +19,8 @@ final class MySqlTargetGuard
             || $target['default'] !== 'mysql'
             || $target['driver'] !== 'mysql'
             || $target['host'] !== 'mysql'
+            || (string) $target['port'] !== '3306'
+            || $target['unix_socket'] !== ''
             || $target['database'] !== 'batani_company_ci_test'
             || $target['username'] !== 'batani_ci_test'
             || ! empty($target['url'])) {
