@@ -4,7 +4,7 @@
 | Metadata | Value |
 |---|---|
 | Document ID | PRD-CP-001 |
-| Version | 1.4 |
+| Version | 1.5 |
 | Date | 2026-11-25 |
 | Status | Approved requirements baseline for planning; implementation not started |
 | Project | Company Profile CMS |
@@ -15,7 +15,7 @@
 ## 1. Purpose and problem statement
 Develop a professional, modern-minimalist corporate profile website with a Laravel backend, MySQL database, and a Filament-based content management system. Public visitors should be able to discover the company's identity, team, achievements, news, publications/studies, IT projects, and contact details. Authorized administrators must be able to manage relevant content without manually editing source code.
 
-The development process itself is a first-class requirement: GitHub Issues capture scoped work planned by a high-reasoning AI agent; a cost-efficient executor implements it via a feature branch and PR; a high-reasoning reviewer evaluates against acceptance criteria; failures generate actionable corrections; passing work proceeds through checks and human-controlled release gates.
+The development process itself is a first-class requirement: GitHub Issues capture scoped work planned by a high-reasoning AI agent; an executor implements it via a feature branch and PR; a separate high-reasoning reviewer evaluates against acceptance criteria; failures generate actionable corrections; passing work proceeds through checks and human-controlled release gates. Workflow foundation work uses high-reasoning agents throughout; application implementation uses the cost-efficient Worker specified in §9.1.
 
 ## 2. Product objectives and measures
 1. Publish accurate and navigable company information, managed through CMS.
@@ -136,7 +136,7 @@ The exact schema, indexes, constraints and whether publications/studies share on
 ### 9.1 Roles
 **Planner (high-reasoning model)**: reads this PRD, assesses repository and environment, drafts architecture, creates small GitHub Issues with dependencies, risks, detailed acceptance criteria and testing plan. No routine feature coding.
 
-**Executor (cost-efficient coding model)**: reads ready Issue and `AGENTS.md`, edits only approved scope on feature branch, runs tests, creates linked PR, records results, responds to reviewer feedback. No production credentials or direct production deployment.
+**Executor (model according to work phase in §9.1)**: reads ready Issue and `AGENTS.md`, edits only approved scope on feature branch, runs tests, creates linked PR, records results, responds to reviewer feedback. No production credentials or direct production deployment.
 
 **Reviewer (high-reasoning model)**: reads Issue/PR and actual diffs, checks behavior against acceptance criteria, security, tests, and regression risks; returns `APPROVED`, `CHANGES_REQUESTED` with exact actionable fixes, or `BLOCKED`. Never invents test execution or approvals.
 
@@ -144,13 +144,14 @@ The exact schema, indexes, constraints and whether publications/studies share on
 
 Planner, Executor, dan Reviewer wajib menggunakan agent/sesi terpisah. Satu akun GitHub boleh digunakan untuk proses proyek; identitas akun GitHub tidak membuktikan pemisahan agent. Review terhadap implementasi sendiri tidak memenuhi gate.
 
-Catat ID agent/sesi untuk setiap peran, ID model yang benar-benar digunakan, serta pengaturan reasoning jika tersedia. Owner telah menyetujui pilihan berikut pada 2026-11-25. Planner, Executor/Worker, dan Reviewer wajib berjalan pada agent/sesi terpisah. Reviewer menggunakan tingkat reasoning dan kelas biaya lebih tinggi daripada Executor berdasarkan pilihan yang disepakati. Penetapan ini merupakan konfigurasi target, bukan bukti model aktual setiap run; identitas model, reasoning, dan pemisahan sesi tetap harus dicatat dan diverifikasi pada handoff serta review penerimaan.
+Catat ID agent/sesi untuk setiap peran, ID model yang benar-benar digunakan, serta pengaturan reasoning jika tersedia. Keputusan owner lanjutan 2026-11-25 menetapkan seluruh pekerjaan fondasi workflow, termasuk implementasi tooling, memakai agent mahal. Planner, Executor/Worker, dan Reviewer tetap agent/sesi terpisah. Perbedaan kelas biaya Reviewer terhadap Worker berlaku saat implementasi aplikasi; seluruh peran workflow memakai kelas dan reasoning yang sama. Penetapan ini merupakan konfigurasi target, bukan bukti model aktual setiap run; identitas model, reasoning, dan pemisahan sesi tetap harus dicatat dan diverifikasi pada handoff serta review penerimaan.
 
-| Peran | Model yang disepakati | Reasoning |
+| Tahap / peran | Model yang disepakati | Reasoning |
 |---|---|---|
-| Planner | `gpt-6-astra` | `high` |
-| Executor/Worker | `gpt-6.1-sol` | `medium` |
-| Reviewer | `gpt-6-astra` | `high` |
+| Fondasi workflow — Planner, Worker, Reviewer terpisah | `gpt-6-astra` | `high` |
+| Aplikasi — Planner | `gpt-6-astra` | `high` |
+| Aplikasi — Executor/Worker | `gpt-6.1-sol` | `medium` |
+| Aplikasi — Reviewer | `gpt-6-astra` | `high` |
 
 Dasar perbandingan biaya dan batas bukti dicatat pada [AGENT-WORKFLOW](AGENT-WORKFLOW.md). Persetujuan pilihan tidak membuktikan integrasi agent atau gate merge telah operasional.
 
@@ -223,5 +224,9 @@ Keputusan owner 2026-11-25 (versi 1.3): “untuk akun github yang sama itu tidak
 Keputusan ini menggantikan usulan sebelumnya yang mewajibkan satu approval native dari akun GitHub lain. Satu akun GitHub diperbolehkan; pemisahan peran, bukti review, CI, dan gate merge tetap wajib. Pada saat keputusan v1.3 dicatat, pemilihan model dan integrasi penerbitan status belum selesai. Perubahan ini mengizinkan penyelarasan dokumentasi M0, tanpa izin mengaktifkan proteksi, push, merge, deploy, atau memulai Fase 5.
 
 **2026-11-25 — Persetujuan model/peran dan penegasan Blade (v1.4).** Owner menyatakan “oke saya setuju” atas rekomendasi Planner dan Reviewer menggunakan `gpt-6-astra` dengan reasoning `high`, serta Executor/Worker menggunakan `gpt-6.1-sol` dengan reasoning `medium`, masing-masing pada agent/sesi terpisah. Owner juga menyatakan “untuk tampilan kita pakenya blade ya” dan mengarahkan agar implementasi tampilan ditunda sampai workflow berjalan dan M0 diterima. Keputusan ini menegaskan Blade yang sudah ada pada baseline dan mengizinkan penyelarasan dokumentasi M0; tidak mengizinkan scaffolding, implementasi aplikasi, atau Fase 5. Pemilihan model telah selesai, sedangkan bukti penerapan per run, publisher status `Agent review` tepercaya, isolasi kredensial, dan verifikasi proteksi/gate GitHub masih belum operasional. Target PHP 8.5.12 serta gate kompatibilitas Laravel 13 dan Filament 5 tetap berlaku.
+
+**2026-11-25 — Seluruh workflow memakai agent mahal dan izin penyelesaian workflow (v1.5).** Dalam sesi owner `1d69e31e-81e6-40ea-b2b3-739af91efe8c`, owner menyatakan: “oke untuk workflow dikerjakan semua oleh agent mahal nanti kalau udah mulai coding serahkan ke agent murah untuk pekerja dan planer pake agent mahal”. Seluruh peran fondasi workflow, termasuk coding tooling, memakai target `gpt-6-astra/high`. Setelah aplikasi diizinkan dimulai, Worker memakai `gpt-6.1-sol/medium`, dengan Planner dan Reviewer `gpt-6-astra/high` pada agent/sesi terpisah. Catatan v1.3/v1.4 di atas dipertahankan sebagai riwayat; pilihan dua tahap ini menggantikan Worker murah untuk pekerjaan workflow.
+
+Owner kemudian menyatakan: “oke lanjutkan sampai selesai,untuk workflonya saya izinkah penuh untuk workflownya berikan hasil terbaik,seperti yang saya inginkan nanti kalau udah sampe tahap coding kabari saya”. Penugasan ini mengizinkan pekerjaan lokal, Issue/PR, publikasi dan konfigurasi GitHub yang diperlukan untuk menyelesaikan workflow repository resmi. Tidak perlu meminta ulang izin untuk tindakan workflow yang sudah tercakup; perubahan harus tetap konkret, terukur, diuji, dan tidak menghilangkan pekerjaan lama. Izin bukan bukti penerimaan M0 atau gate operasional. Persyaratan pemisahan akses, keaslian review, CI terbaru dan penolakan hasil usang tetap berlaku; jangan melewatinya untuk menyebut workflow selesai. Aplikasi Laravel/Filament/Blade, deployment dan Fase 5 belum dimulai: kabari owner saat workflow siap untuk tahap coding aplikasi. Keputusan ini dicatat dalam penugasan lanjutan [Issue #4](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/4), terpisah dari patch dokumentasi Issue #2.
 
 Planner may elaborate architecture and issue detail but may not silently alter these decisions. Proposed deviations must be recorded as a decision request and approved by the owner. Issues and PRs must reference this PRD and relevant section IDs.

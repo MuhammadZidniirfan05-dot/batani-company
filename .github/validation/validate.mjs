@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url';
 import { parseDocument } from 'yaml';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-// PRD v1.4, §13: PHP 8.5.12, agent terpisah/satu akun, model disetujui dan penegasan Blade.
-const expectedPrdHash = '410367994fc941e0a05fa5eecc8d3cda311b92d4509876fd65ac780a24d5fa71';
+// PRD v1.5, §13: keputusan owner tentang model dua tahap dan izin penyelesaian workflow.
+const expectedPrdHash = '475cc7139b6bae90fd1fe03465063ad9b7eae2284d1681192798490d5f50410e';
 const documents = [
   'AGENTS.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-WORKFLOW.md',
   'docs/ROADMAP.md', 'docs/ISSUE-GUIDELINES.md', 'docs/REVIEW-CHECKLIST.md',

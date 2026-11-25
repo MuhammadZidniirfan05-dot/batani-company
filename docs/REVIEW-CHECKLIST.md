@@ -2,7 +2,7 @@
 
 Acuan: [PRD](PRD.md) §§9.1, 9.4–9.5, 11, 13. Reviewer memeriksa Issue, PR, diff aktual, dan hasil pemeriksaan untuk commit terbaru. Review ini adalah peran terpisah dari Executor; review mandiri tidak boleh disebut approval independen.
 
-Planner, Executor, dan Reviewer wajib agent/sesi berbeda; satu akun GitHub diperbolehkan. Catat identitas sesi/model aktual serta reasoning bila tersedia. Pilihan owner adalah Planner/Reviewer `gpt-6-astra` / `high` dan Executor/Worker `gpt-6.1-sol` / `medium` (PRD §§9.1, 13). Bila bukti aktual belum tersedia atau tidak sesuai, nyatakan keterbatasannya sebelum review penerimaan. Laporan agent bukan approval native GitHub atau bukti status `Agent review` sudah aktif.
+Planner, Executor, dan Reviewer wajib agent/sesi berbeda; satu akun GitHub diperbolehkan. Catat identitas sesi/model aktual serta reasoning bila tersedia. Pilihan owner terbaru: seluruh peran workflow `gpt-6-astra/high`; pada aplikasi Planner/Reviewer `gpt-6-astra/high` dan Worker `gpt-6.1-sol/medium` (PRD §§9.1, 13 v1.5). Bila bukti aktual belum tersedia atau tidak sesuai, nyatakan keterbatasannya sebelum review penerimaan. Laporan agent bukan approval native GitHub atau bukti status `Agent review` sudah aktif.
 
 Sebelum menjalankan peran Reviewer, sebutkan ID sesi, model/reasoning aktual jika tersedia dan bandingkan dengan target. Bila berbeda, ingatkan owner dengan expected/actual dan perpindahan peran/sesi yang diperlukan. Bila metadata tidak tersedia, tulis **belum terverifikasi** dan minta pemeriksaan pemilih model; nama model pada instruksi tidak membuktikan run aktual. Reviewer tidak boleh menjadi sesi Worker yang membuat patch.
 

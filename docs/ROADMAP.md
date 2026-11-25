@@ -2,6 +2,8 @@
 
 Acuan: [PRD](PRD.md) §§9.6, 10–13. Ini rencana dependensi, bukan janji tanggal atau bukti milestone selesai.
 
+**Pembaruan penugasan 2026-11-25:** PRD v1.5 menetapkan seluruh pekerjaan workflow memakai `gpt-6-astra/high` pada peran terpisah, serta izin penyelesaian workflow lokal/GitHub. Model Worker murah pada catatan rencana lama di bawah telah diganti untuk tahap workflow; tetap berlaku untuk aplikasi nanti. [Issue #4](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/4) menugaskan evaluator offline dan penyelarasan kebijakan. Izin/persiapan kode belum menjadi bukti gate, isolasi atau M0 diterima. Coding aplikasi belum dimulai dan owner akan dikabari sebelum tahap itu.
+
 ## Milestone
 
 | Milestone | Hasil | Dependensi / gate |
@@ -17,6 +19,20 @@ Acuan: [PRD](PRD.md) §§9.6, 10–13. Ini rencana dependensi, bukan janji tangg
 M0 tidak membuat aplikasi, migrasi, resource Filament, UI, konten bisnis, search berbayar, atau deployment. Fase percakapan 3–4 menghasilkan paket fondasi; itu tidak otomatis menandakan seluruh milestone M0 diterima. Fase 5 memerlukan persetujuan owner terpisah.
 
 Fase 4.5 menghubungkan folder lokal ke repository resmi yang dipilih owner. Setelah persetujuan publikasi, baseline main dan branch fondasi sudah tersedia, [draft PR #1](https://github.com/MuhammadZidniirfan05-dot/batani-company/pull/1) dibuat, dan CI push/pull_request berhasil pada head awal `f2e5512` serta head `1d6f1a9`. Bagian teknis repository/bootstrap M0-B sudah terbukti, tetapi penerimaan owner M0-A tetap terpisah. Pada 2026-11-25 owner mengubah repository menjadi public; API mengonfirmasi PUBLIC, proteksi main belum ada (HTTP 404 `Branch not protected`), dan rulesets kosong. Hambatan plan sebelumnya selesai, tetapi M0-C masih menunggu izin aktivasi proteksi dan reviewer independen. Snapshot sebelum publikasi pembaruan masih memakai check `M0 validation` sukses pada `1d6f1a9`; hasil itu tidak memvalidasi paket PHP 8.5.12 dan PRD v1.4. Owner kemudian mengizinkan commit/push paket pada branch yang sama, pembaruan deskripsi PR #1, dan pemeriksaan CI baru; SHA serta hasil aktual dicatat pada PR setelah publikasi. M0-D/F/G belum diaktifkan; gate teknologi M0-E belum lulus. Bukti dan rencana konfigurasi: [AGENT-WORKFLOW](AGENT-WORKFLOW.md), mengacu PRD §§3, 9.5, 11, 13. Tidak ada izin memulai Fase 5.
+
+## Hasil parsial M0-D, 2026-11-25
+
+Owner meminta melanjutkan tugas berikutnya tanpa mengulang review paket dokumentasi. Tidak ada verdict APPROVED atau penerimaan M0 yang diklaim; PR tetap draft. Tindak lanjut setelah snapshot di atas menyelesaikan bagian label M0-D sesuai PRD §9.5: 19 label baru dibuat, seluruh 20 label target tersedia, dan 10 label lama dipertahankan tanpa perubahan. Total label repository menjadi 29; nama, warna, dan deskripsi diperiksa kembali melalui API.
+
+GitHub Projects masih BLOCKED pada akses: `gh project list` mengembalikan exit 1 karena scope `read:project` belum tersedia. Keberadaan board belum dapat diperiksa; field/status, simulasi transisi, ownership item, dan aturan closure dokumentasi belum selesai. Petunjuk akses operator dan bukti ada pada [AGENT-WORKFLOW](AGENT-WORKFLOW.md). Tidak ada Issue, item percobaan, commit/push baru, perubahan proteksi, merge, deployment, atau Fase 5 dalam penugasan ini. Catatan ini adalah pembaruan lokal setelah head `38a670a`.
+
+## Tindak lanjut konfigurasi Projects M0-D, 2026-11-25
+
+Hambatan scope Projects pada snapshot sebelumnya sudah teratasi melalui otorisasi owner dan pembacaan/mutasi API yang berhasil. [Board Batani](https://github.com/users/MuhammadZidniirfan05-dot/projects/2) dibuat private, tertaut ke repository resmi, memiliki 12 status PRD §9.2 serta Priority, Risk, Module, Agent owner, PRD reference dan Dependencies. View board memakai kolom Status. Enam aturan otomatis bawaan pada board baru dihapus; tidak ada auto-close atau perpindahan DONE saat merge. Board proyek lama dipertahankan dan diverifikasi identik. Bukti API dan batas pemeriksaan ada pada [AGENT-WORKFLOW](AGENT-WORKFLOW.md).
+
+M0-D kini mempunyai label dan konfigurasi board yang aktif; seluruh transisi dan handoff tetap manual. Penerimaan M0-D belum lengkap: simulasi tugas nyata, ownership item, serta keputusan owner atas closure dokumentasi masih pending. Tidak dibuat Issue atau item percobaan. Publisher tepercaya/isolasi izin M0-F, proteksi dan pengujian gate M0-C, serta validasi teknologi M0-E tetap belum selesai; board bukan bukti kontrol merge atau agent otomatis.
+
+Langkah berikut sesuai PRD §§9.2–9.5, 11: Planner menyiapkan penyelesaian acceptance criteria M0-D dan rancangan M0-F, termasuk usulan closure dokumentasi untuk keputusan owner, batas kepercayaan publisher, pemisahan kredensial, serta rencana uji kegagalan/pemalsuan/replay/head-base berubah. Implementasi integrasi dan uji dengan Issue nyata tetap memerlukan penugasan yang mengizinkannya. Tidak ada izin merge, deployment atau Fase 5. Catatan tambahan ini tetap lokal setelah head `38a670a`; dua perubahan dokumentasi terdahulu dipertahankan, tanpa commit/push baru.
 
 ## Backlog rancangan lokal
 
@@ -45,3 +61,11 @@ Keputusan owner 2026-11-24 mengganti target PHP 8.6 menjadi **8.5.12** (PRD §13
 Owner perlu menerima arsitektur, pembagian izin, nama repository/plan, mekanisme agent dan batas biaya, hasil kompatibilitas, serta aturan closure dokumentasi. Detail status akses dan kontrol di [AGENT-WORKFLOW](AGENT-WORKFLOW.md); bukti runtime di [PHP-COMPATIBILITY](PHP-COMPATIBILITY.md).
 
 Belum ada tanggal, anggaran, hosting, konten perusahaan, atau jadwal rilis yang disetujui. Planner harus memecah backlog menjadi kontrak Issue lengkap sebelum READY; tabel ini tidak menggantikan kontrak tersebut.
+
+## Rencana penerimaan M0-D dan paket M0-F, 2026-11-25
+
+[Rencana rinci](M0-D-M0-F-PLAN.md) mengacu PRD §§9.2–9.5, 11 dan 13. D-AC1/2 (konfigurasi label/board) sudah dibuktikan; D-AC3/4/5/6 (keputusan closure, simulasi, ownership/handoff nyata, penerimaan owner) masih pending. Demonstrasi D-AC5 dilaksanakan bersama F-AC7 agar dependensi M0-D/F tidak melingkar. Rencana ini tidak menetapkan M0 selesai.
+
+Urutan usulan: F0 keputusan owner → F1 simulator offline → F2 adapter/publisher yang belum aktif → F3 pengujian integrasi/gate M0-C berizin → F4 demonstrasi tugas nyata → M0-ACCEPT. Seluruh ID adalah backlog lokal, bukan Issue; F1–F4 belum READY. Worker F1 ditargetkan `gpt-6.1-sol/medium`, Reviewer terpisah `gpt-6-astra/high`; identitas aktual tetap wajib dibuktikan. Publikasi, App/secret/proteksi dan tindakan GitHub dikerjakan operator melalui penugasan terpisah, tanpa credential tersebut di Worker.
+
+Usulan D-DEC-1 dokumentasi murni tidak otomatis berlaku untuk PR #1 yang berisi konfigurasi/validator. Publisher dan pengikatan H/B/M belum teruji; salah sumber, hasil usang, race atau kegagalan pencabutan yang belum tertutup menahan aktivasi. Validasi teknologi M0-E tetap wajib sebelum M1. Tidak membuat Issue, mengaktifkan integrasi/proteksi, push, merge, deploy atau memulai Fase 5 dalam tugas perencanaan ini.
