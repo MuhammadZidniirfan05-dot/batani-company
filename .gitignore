@@ -13,3 +13,18 @@ auth.json
 
 # Log lokal
 *.log
+
+# Dependency dan hasil build Laravel
+/vendor/
+/public/build/
+/public/hot
+/public/storage
+/bootstrap/cache/*.php
+/.phpunit.cache/
+/.phpunit.result.cache
+/database/*.sqlite*
+/storage/*.key
+/storage/logs/*
+!/storage/logs/.gitignore
+/.fleet/
+/.idea/

@@ -2,7 +2,9 @@
 
 Website profil perusahaan berbasis **Laravel, MySQL, dan Filament**, dikembangkan melalui **GitHub Issues, Pull Requests, GitHub Actions, dan AI Multi-Agent Workflow**.
 
-> **Status proyek:** Perencanaan / Milestone **M0 — GitHub Workflow Foundation**. Implementasi Laravel, CMS, dan desain antarmuka **belum dimulai**.
+> **Status proyek:** Fondasi Laravel 13 mulai dibangun pada [Issue #8](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/8) atas instruksi owner (PRD v1.7). Modul CMS dan desain final belum dibuat. Penerimaan formal M0 serta kontrol merge/release tetap terpisah.
+
+Untuk menjalankan fondasi sekarang, ikuti [panduan lokal](docs/LOCAL-DEVELOPMENT.md). Gunakan PHP **8.5.12**; tersedia task VS Code untuk build aset dan server lokal. Aturan penundaan M0 pada bagian historis di bawah telah dikecualikan untuk scope Issue #8; Worker tugas ini memakai target agent mahal, bukan Worker murah default.
 
 ## 1. Sumber acuan utama
 
@@ -140,7 +142,7 @@ Set-Location batani-company
 code .
 ```
 
-Jangan jalankan perintah aplikasi Laravel sebelum M0 diterima dan stack dinyatakan kompatibel.
+Owner mengizinkan menjalankan fondasi Laravel lokal dalam scope Issue #8. Periksa runtime, dependency dan hasil tes aktual; jangan menyamakan fondasi ini dengan kompatibilitas CMS/hosting atau kesiapan produksi.
 
 ## 7. Standar keamanan dan kontribusi
 
@@ -162,4 +164,4 @@ Jangan jalankan perintah aplikasi Laravel sebelum M0 diterima dan stack dinyatak
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Keputusan arsitektur |
 | [`.github/`](.github/) | Template Issue/PR dan workflow validasi M0 |
 
-**Langkah berikutnya:** selesaikan tooling dan integrasi workflow pada Issue yang ditugaskan, verifikasi CI, review terpisah, isolasi dan kontrol GitHub sesuai [`docs/PRD.md`](docs/PRD.md) §§9, 11, dan 13. Izin penuh workflow tidak meluluskan gate secara otomatis; kabari owner sebelum tahap coding aplikasi.
+**Langkah berikutnya:** verifikasi fondasi Laravel Issue #8, lalu rencanakan koneksi MySQL dan CMS Filament sebagai scope berikutnya. Review terpisah, isolasi dan kontrol merge tetap mengikuti [`docs/PRD.md`](docs/PRD.md) §§9, 11, 13; fondasi aplikasi bukan website/CMS yang selesai.

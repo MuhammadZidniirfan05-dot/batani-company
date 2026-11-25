@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Laravel: build assets",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "build"],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Laravel: serve (PHP 8.5.12)",
+            "type": "process",
+            "command": "php",
+            "windows": {
+                "command": "D:/laragon/bin/php/php-8.5.12-Win32-vs17-x64/php.exe"
+            },
+            "args": ["artisan", "serve", "--host=127.0.0.1", "--port=8001"],
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Laravel: test",
+            "type": "process",
+            "command": "php",
+            "windows": {
+                "command": "D:/laragon/bin/php/php-8.5.12-Win32-vs17-x64/php.exe"
+            },
+            "args": ["artisan", "test"],
+            "group": "test",
+            "problemMatcher": []
+        }
+    ]
+}

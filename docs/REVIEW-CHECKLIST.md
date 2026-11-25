@@ -1,5 +1,7 @@
 # Review, penolakan, dan bukti
 
+**Scope aplikasi awal v1.7:** Issue #8 mengizinkan Laravel lokal/Blade awal/tes/CI dengan Worker kelas mahal (target proyek Astra/high). Reviewer boleh memverifikasi tes aplikasi yang benar-benar sudah tersedia; aturan historis M0 tentang belum adanya Laravel tidak berlaku untuk scope baru ini. M0/review gate/deployment tidak otomatis lulus. Model aktual tetap memerlukan bukti.
+
 Acuan: [PRD](PRD.md) §§9.1, 9.4–9.5, 11, 13. Reviewer memeriksa Issue, PR, diff aktual, dan hasil pemeriksaan untuk commit terbaru. Review ini adalah peran terpisah dari Executor; review mandiri tidak boleh disebut approval independen.
 
 Planner dan Worker boleh memakai chat/sesi yang sama secara berurutan; Reviewer memakai chat lain dari Planner/Worker (PRD v1.6). Satu akun GitHub diperbolehkan. Catat peran, ID sesi, run/turn atau waktu, model/reasoning aktual dan sumber buktinya. Target seluruh peran workflow `gpt-6-astra/high`; pada aplikasi Planner/Reviewer `gpt-6-astra/high`, Worker `gpt-6.1-sol/medium`. Bukti aktual yang belum tersedia/tidak sesuai harus dinyatakan sebelum review penerimaan. Laporan agent bukan approval native GitHub atau bukti status `Agent review` aktif.

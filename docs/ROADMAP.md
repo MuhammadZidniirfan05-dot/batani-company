@@ -1,5 +1,7 @@
 # Roadmap dan backlog yang belum diterbitkan
 
+**Mulai M1 terbatas, PRD v1.7:** owner mengizinkan fondasi Laravel pada Issue #8 sekarang dengan agent mahal, tanpa mengklaim penerimaan formal M0 selesai. Scope Laravel/Blade awal, konfigurasi MySQL, dependency/tes/CI; CMS, MySQL live dan hosting menyusul. Snapshot dependensi lama di bawah tetap riwayat; gate merge/release tetap wajib.
+
 Acuan: [PRD](PRD.md) §§9.6, 10–13. Ini rencana dependensi, bukan janji tanggal atau bukti milestone selesai.
 
 **Aturan terbaru v1.6 — 2026-11-25:** [Issue #6](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/6) menyelaraskan Planner → Worker dalam chat yang sama dengan pemilihan model dan catatan per tahap; Reviewer mahal memakai chat lain. Untuk aplikasi nanti: Planner mahal membuat Issue, Worker murah membaca/mengerjakan/mengetes, Reviewer mahal menilai dan mengirim koreksi pada PR yang sama. Fondasi workflow tetap seluruhnya target mahal. [Clean Architecture dan Clean Code](ARCHITECTURE.md#clean-architecture-dan-clean-code) wajib masuk Issue dan review. Catatan sesi terpisah pada snapshot lama di bawah berlaku saat itu; handoff aktif mengikuti [runbook](AGENT-WORKFLOW.md#handoff-satu-chat-dan-prompt). Ini belum penerimaan M0 atau izin coding aplikasi.

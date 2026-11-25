@@ -1,5 +1,7 @@
 # Gate kompatibilitas PHP dan stack
 
+**Pembaruan v1.7, 2026-11-25:** owner mengizinkan membangun dan menguji fondasi Laravel pada [Issue #8](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/8) sekarang. Runtime CLI 8.5.12 dan Composer 2.10.2 kembali diperiksa langsung. Bukti dependency, tes, build dan CI dicatat pada PR Issue #8 setelah dijalankan. Syarat lama menunda seluruh scaffolding di bawah adalah riwayat; batas aktif sesuai [PRD](PRD.md) §13 v1.7. Filament, koneksi MySQL nyata, Apache dan hosting tetap memerlukan pengujian tersendiri; jangan menganggap seluruh gate kompatibilitas lulus.
+
 Acuan: [PRD](PRD.md) §§3, 8, 9.6, 10–13. Status gate kompatibilitas: **BELUM LULUS**. Target resmi sekarang **PHP 8.5.12**, menggantikan 8.6 atas instruksi eksplisit owner pada 2026-11-24 yang dicatat di PRD §13. Laravel **13**, Filament **5**, MySQL **8.x**, Blade/Tailwind/Alpine/Vite tetap rencana. Keputusan ini mengubah target teknologi, bukan workaround sementara atau izin scaffolding/Fase 5.
 
 ## Bukti untuk target 8.5.12, 2026-11-24

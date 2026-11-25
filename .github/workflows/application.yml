@@ -1,0 +1,63 @@
+name: Laravel CI
+
+on:
+  pull_request:
+    branches: [main, 'chore/**', 'feature/**']
+  push:
+    branches: [main, 'feature/**', 'fix/**', 'chore/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: laravel-ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  application:
+    name: Laravel validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    container:
+      image: php:8.5.12-cli-bookworm@sha256:050713ce008e2360ea9dc96e1f9a075690132388d917fc3552806f7a7be6f2a0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Prepare extensions and verified Composer
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git unzip libicu-dev libzip-dev
+          docker-php-ext-install -j2 intl pdo_mysql zip
+          curl --fail --silent --show-error --location https://getcomposer.org/download/2.10.2/composer.phar --output /tmp/composer.phar
+          echo '5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027  /tmp/composer.phar' | sha256sum --check
+          install -m 755 /tmp/composer.phar /usr/local/bin/composer
+      - name: Verify exact PHP version
+        run: |
+          php -r "exit(PHP_VERSION === '8.5.12' ? 0 : 1);"
+      - name: Validate and install locked dependencies
+        env:
+          COMPOSER_ALLOW_SUPERUSER: '1'
+        run: |
+          composer validate --strict
+          composer install --no-interaction --prefer-dist --no-progress --no-plugins
+          composer check-platform-reqs
+          composer audit
+      - name: Prepare isolated application environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+      - name: Check code style
+        run: vendor/bin/pint --test
+      - name: Test application
+        run: php artisan test
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Build locked frontend assets
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run build

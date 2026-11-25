@@ -4,13 +4,13 @@
 | Metadata | Value |
 |---|---|
 | Document ID | PRD-CP-001 |
-| Version | 1.6 |
+| Version | 1.7 |
 | Date | 2026-11-25 |
-| Status | Approved requirements baseline for planning; implementation not started |
+| Status | Initial Laravel foundation authorized; formal M0 acceptance and release gates remain pending |
 | Project | Company Profile CMS |
 | Repository | New, separate repository (`company-profile-cms` proposed) |
 | Product Owner | Project owner (human) |
-| Priority now | GitHub multi-agent workflow foundation (M0), **not UI design** |
+| Priority now | Initial Laravel 13 foundation (Issue #8), before business modules and final UI |
 
 ## 1. Purpose and problem statement
 Develop a professional, modern-minimalist corporate profile website with a Laravel backend, MySQL database, and a Filament-based content management system. Public visitors should be able to discover the company's identity, team, achievements, news, publications/studies, IT projects, and contact details. Authorized administrators must be able to manage relevant content without manually editing source code.
@@ -28,11 +28,11 @@ The development process itself is a first-class requirement: GitHub Issues captu
 Initial acceptance metrics (targets; not current achievements): all mandatory pages reachable from navigation; 100% of public content types editable by permitted CMS users; draft content not publicly accessible; key automated tests passing; staging verified before human-approved production release.
 
 ## 3. Technology and constraints
-- Language: **PHP 8.5.12 approved target**, replacing PHP 8.6 by the owner's explicit decision recorded in §13. This exact version is a hard product preference, but its availability and actual compatibility with Laravel, Filament, Composer packages, required PHP extensions, CI runners and hosting **must be verified before application scaffolding**. Do not assert support or silently change versions. Document any blockers and present an alternative for the owner's explicit approval.
+- Language: **PHP 8.5.12 approved target**, replacing PHP 8.6 by the owner's explicit decision recorded in §13. Verify the exact runtime, extensions and resolved dependencies for each authorized implementation scope. The owner now authorizes initial Laravel scaffolding and tests under v1.7; this does not certify Filament or hosting. Compatibility of the complete stack and hosting remains required before the affected integration/release. Do not assert support or silently change versions.
 - Framework: Laravel 13 target, pending the compatibility gate above.
 - Database: MySQL 8.x.
 - CMS: Filament 5 target, pending compatibility verification.
-- Frontend: Laravel Blade untuk tampilan publik, Tailwind CSS, Alpine.js, dan Vite. Blade sudah tercantum pada baseline dan ditegaskan kembali oleh owner; implementasi tampilan ditunda sampai workflow berjalan dan M0 diterima.
+- Frontend: Laravel Blade untuk tampilan publik, Tailwind CSS, Alpine.js, dan Vite. V1.7 mengizinkan halaman Blade awal dan build aset; desain final, konten perusahaan dan modul bisnis belum termasuk Issue #8.
 - Testing: Pest or PHPUnit, selected during architecture phase.
 - Source and work coordination: GitHub repository, Issues, Projects, Pull Requests, Actions, rulesets and environments as supported by actual plan and permissions.
 - Visual direction: **modern, minimalist, responsive**. Detailed UI design **is postponed** until the GitHub workflow foundation is working.
@@ -153,6 +153,8 @@ Catat peran, ID agent/sesi, penanda run/turn bila tersedia atau waktu handoff, m
 | Aplikasi — Executor/Worker | `gpt-6.1-sol` | `medium` |
 | Aplikasi — Reviewer | `gpt-6-astra` | `high` |
 
+Pengecualian penugasan v1.7: owner meminta agent mahal untuk fondasi Laravel [Issue #8](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/8), termasuk Executor. Gunakan target kelas mahal pilihan proyek `gpt-6-astra/high`; model/reasoning aktual tetap **belum terverifikasi** sampai ada bukti. Tabel Worker murah tetap pola default untuk penugasan berikutnya, bukan target Executor Issue #8. Simulator offline F1 masih memodelkan kebijakan v1.6; hasilnya bukan gate atau verifikasi metadata penugasan ini.
+
 Dasar perbandingan biaya dan batas bukti dicatat pada [AGENT-WORKFLOW](AGENT-WORKFLOW.md). Persetujuan pilihan tidak membuktikan integrasi agent atau gate merge telah operasional.
 
 ### 9.2 Required states
@@ -195,7 +197,7 @@ APPROVED dalam laporan agent bukan approval native GitHub dan belum membuktikan 
 9. First small backlog of GitHub Issues for workflow wiring and PHP compatibility validation.
 10. Report what is implemented versus blocked, proposed, or pending permission.
 
-**M0 exclusions:** no application scaffolding, database migrations, Filament Resources, public UI styling, hero/mockups, or deployment to any production site. Those come only after workflow foundation acceptance.
+**M0 exclusions:** aplikasi bukan bagian deliverable M0. Pengecualian urutan terbaru v1.7 mengizinkan memulai fondasi Laravel pada Issue #8 sebelum penerimaan formal M0 selesai. Tidak ada penerimaan M0, izin merge atau deployment yang tersirat.
 
 ## 10. Later milestone roadmap (outline)
 - **M0 — Workflow foundation:** GitHub Issue/PR conventions, multi-agent runbook, safe CI, compatibility gate.
@@ -234,5 +236,9 @@ Owner kemudian menyatakan: “oke lanjutkan sampai selesai,untuk workflonya saya
 **2026-11-25 — Handoff satu chat dan standar kualitas (v1.6).** Dalam sesi owner `1d69e31e-81e6-40ea-b2b3-739af91efe8c`, owner menyatakan: “ah seperitnya aman itu yang pentinf pola developnya pake agent mahal untuk plan lalu dichat yang sama meminta pindah agent murah lalu meminta untuk membac adan mngerjakan github isue yang dikerjakan oleh agent maha tadi,lalu agent mahal review hasil kode dari agent murah.  tolong terapkan juga aturan clean arsitektur dan clean code”. Keputusan ini mengizinkan Planner → Worker dalam chat yang sama, dengan Issue nyata sebagai kontrak dan handoff peran/model yang tercatat. Ini menggantikan kewajiban sesi Planner dan Worker berbeda pada v1.3–v1.5. Reviewer mahal tetap menggunakan chat lain sebagai default independen dari sesi implementasi; owner belum meminta penggabungan sesi Reviewer.
 
 Standar Clean Architecture dan Clean Code menjadi kewajiban perencanaan, implementasi dan review sesuai §8 serta [ARCHITECTURE](ARCHITECTURE.md). Penerapan tercatat pada [Issue #6](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/6). Pekerjaan fondasi workflow saat ini tetap seluruhnya memakai target mahal sesuai v1.5; saat aplikasi diizinkan, Planner/Reviewer `gpt-6-astra/high` dan Worker `gpt-6.1-sol/medium`. Pernyataan ini tidak membuktikan model telah berganti, tidak menerima gate M0/runtime, serta tidak mengizinkan self-review, merge, deployment atau Fase 5. Bukti historis dipertahankan; aturan aktif pada §§8–9 mengikuti keputusan terbaru ini.
+
+**2026-11-25 — Mulai fondasi Laravel dengan agent mahal (v1.7).** Pada sesi `1d69e31e-81e6-40ea-b2b3-739af91efe8c`, owner menyatakan: “langsung aja mulai coding.ubtuk pekerjaan oleh agent palingmahal jadisaya sudah percaya,mulai bangun laravel”. Ini otorisasi eksplisit memulai aplikasi, menggantikan penundaan seluruh scaffolding/Fase 5 pada keputusan sebelumnya untuk scope [Issue #8](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/8). Scope awal: Laravel 13, PHP 8.5.12, halaman Blade awal, konfigurasi MySQL nonrahasia, dependency terkunci, pengujian dan CI. Executor tugas ini memakai kelas mahal; target proyek Astra/high tetap dibedakan dari bukti aktual. Tidak perlu meminta izin memulai Laravel lagi.
+
+Penerimaan formal M0, metadata model, publisher review dan proteksi belum dianggap selesai oleh pernyataan kepercayaan tersebut. Dependency/runtime lokal dan CI diuji saat membangun fondasi. Filament, database MySQL nyata, hosting dan fitur bisnis diuji pada penugasan terkait; jangan mengklaim kompatibilitasnya dari tes Laravel/SQLite saja. Izin ini tidak mencakup merge, perubahan database existing, deployment, desain final atau pengisian data perusahaan. Riwayat penundaan di bawah/dokumen lain tetap catatan keadaan lama, bukan larangan atas scope baru ini.
 
 Planner may elaborate architecture and issue detail but may not silently alter these decisions. Proposed deviations must be recorded as a decision request and approved by the owner. Issues and PRs must reference this PRD and relevant section IDs.

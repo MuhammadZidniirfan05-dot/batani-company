@@ -1,6 +1,6 @@
 # Arsitektur awal dan batas M0
 
-Status: rancangan untuk review owner; belum merupakan penerimaan M0 atau izin implementasi aplikasi.
+Status: fondasi Laravel awal diizinkan owner melalui PRD §13 v1.7 / Issue #8; arsitektur modul bisnis berikutnya tetap rancangan. Ini belum penerimaan M0 atau izin merge/deploy.
 Acuan: [PRD](PRD.md) §§1–8, 9.6, 10–13.
 
 ## Arsitektur proses yang disiapkan
@@ -27,7 +27,7 @@ Batas kepercayaan workflow memisahkan sesi Reviewer dan publisher dari sesi impl
 
 ## Rancangan aplikasi setelah gate
 
-Tampilan publik menggunakan Laravel Blade yang sudah ada pada baseline dan ditegaskan kembali oleh owner. Implementasinya ditunda sampai workflow berjalan dan M0 diterima (PRD §§3, 13).
+Tampilan publik menggunakan Laravel Blade. Issue #8 mengimplementasikan halaman awal melalui route view dan Vite; belum ada logika bisnis sehingga tidak dibuat controller/service/repository kosong. Konfigurasi MySQL dan migration bawaan Laravel disiapkan tanpa menjalankan migrasi pada database existing. Implementasi CMS/fitur produk menyusul dalam Issue tersendiri (PRD §§3, 13 v1.7).
 
 | Lapisan | Target dan tanggung jawab | Acuan PRD |
 |---|---|---|
