@@ -1,8 +1,62 @@
 # Runbook GitHub dan alur agent
 
-Acuan: [PRD](PRD.md) §§2, 9, 11–13; [AGENTS](../AGENTS.md). Tanggal inspeksi: 2026-11-24. Status Fase 4.5: remote dan akses GitHub terverifikasi; baseline dan branch fondasi sudah dipublikasikan dengan persetujuan owner; draft PR dan CI push/PR berhasil diverifikasi. Proteksi/review masih terhambat; integrasi agent belum operasional.
+Acuan: [PRD](PRD.md) §§2, 9, 11–13; [AGENTS](../AGENTS.md). Inspeksi terbaru: 2026-11-25. Repository sudah public; proteksi main belum dikonfigurasi. Keputusan owner memperbolehkan satu akun GitHub dengan agent/sesi Planner, Executor, Reviewer terpisah. Pemilihan model telah disepakati; penerapan dan bukti per run, integrasi status review tepercaya, serta isolasi kredensial masih pending. Draft PR dan CI pada head remote terverifikasi; integrasi agent belum operasional.
 
-## Status repository dan bootstrap
+## Keputusan pemisahan agent, 2026-11-25
+
+Owner menetapkan “untuk akun github yang sama itu tidak masalah” dan meminta agent berbeda untuk Planner, Executor, dan Reviewer. Sesuai PRD §§9.1, 13, Reviewer menggunakan tingkat reasoning dan kelas biaya lebih tinggi daripada Executor; ID model target dan dasar perbandingan biaya telah ditetapkan, sedangkan identitas model aktual dan reasoning harus dibuktikan pada setiap run. Akun GitHub kedua bukan lagi blocker proyek. Usulan sebelumnya yang mewajibkan satu approval native non-author telah digantikan keputusan ini dan tidak pernah diaktifkan.
+
+Laporan agent bukan approval native GitHub. Akun yang sama tidak membuktikan pemisahan sesi/model. Jika semua agent memperoleh kredensial admin yang sama, pemisahan peran belum ditegakkan secara teknis. Blocker saat ini adalah integrasi hasil review tepercaya, pemisahan izin, bukti penerapan peran/model aktual, dan verifikasi gate sebelum merge.
+
+## Pilihan model dan basis biaya yang disetujui, 2026-11-25
+
+Owner menyetujui Planner dan Reviewer `gpt-6-astra` / `high` serta Executor/Worker `gpt-6.1-sol` / `medium`, dengan agent/sesi terpisah untuk setiap peran (PRD §§9.1, 13). Snapshot [harga resmi](https://learn.chatgpt.com/docs/pricing) tanggal 2026-11-25 pada mode Standard, per satu juta token, mencatat Astra: input 250, cached input 25, output 1.250 credits; Sol 6.1: input 50, cached input 2,5, output 250 credits. Pada basis tersebut kelas biaya Astra lebih tinggi daripada Sol 6.1; total biaya run tetap bergantung pada pemakaian. Angka credits ini tidak menyatakan tarif penagihan API, yang terpisah. Identitas model merujuk pada [dokumentasi model resmi](https://learn.chatgpt.com/docs/models).
+
+Penetapan model/effort adalah target yang disepakati; bukti model aktual, reasoning, dan pemisahan sesi wajib dicatat per run. Luna tetap merupakan opsi terdahulu untuk tugas kecil, bukan Worker default. Blade ditegaskan sebagai tampilan publik yang implementasinya menunggu workflow berjalan dan M0 diterima (PRD §§3, 13). Persetujuan ini tidak mengaktifkan integrasi, mengizinkan scaffolding, push, merge, deployment, atau Fase 5.
+
+## Keputusan target PHP setelah review M0
+
+Pada 2026-11-24 owner meminta “oiya saya ingin untuk phpnya veri 8.5 12”. Sesuai [PRD §13](PRD.md#13-change-control-and-precedence), target resmi berubah menjadi **PHP 8.5.12**. Penyelarasan lokal mencakup PRD versi 1.2, README, instruksi agent, arsitektur, roadmap, catatan kompatibilitas, serta hash baseline validator; pengaman baseline tetap aktif. Keputusan versi tidak meluluskan gate kompatibilitas dan tidak mengizinkan Fase 5, merge, atau deployment.
+
+Bukti bootstrap di bawah adalah riwayat sebelum keputusan ini: PRD/README memang belum berubah pada commit yang disebut. Snapshot sebelum publikasi pembaruan 2026-11-25 masih berada pada head `1d6f1a9`; CI head tersebut tidak membuktikan validasi paket versi 1.4. Otorisasi publikasi pembaruan dicatat di bawah; hasil push, SHA baru, dan CI dicatat pada deskripsi/checks PR #1 setelah diperoleh, tanpa mengubah bukti historis menjadi klaim untuk commit terbaru.
+
+## Snapshot sebelum publikasi pembaruan, 2026-11-25
+
+Owner menyampaikan “oke repo sudah saya ubah jadi public”. Pemeriksaan GitHub mengonfirmasi perubahan tersebut sesuai kewenangan owner pada PRD §§9.5, 13. Agent hanya memeriksa hasil; tidak mengubah visibility.
+
+| Pemeriksaan | Bukti aktual | Status |
+|---|---|---|
+| Metadata repository resmi | `visibility: PUBLIC`, `viewerPermission: ADMIN`, default branch `main` | Terverifikasi |
+| Proteksi main | Metadata branch `protected: false`; endpoint protection HTTP 404 `Branch not protected` | Belum dikonfigurasi; bukan lagi HTTP 403 keterbatasan plan |
+| Rulesets repository | API berhasil, hasil `[]` | Belum ada ruleset |
+| PR #1 | OPEN/DRAFT; head `1d6f1a987664db8805e140cc1005a9c884c1c59d`; base `833603ddc4c126ee70c7549989b49cec5a6442f7` | Tidak berubah |
+| CI head PR | Dua check `M0 validation` sukses pada head yang sama, dari `github-actions` (App ID `15368`) | Eksekusi lulus; belum menjadi required check |
+| Reviewer | Reviews dan review requests kosong; collaborator hanya owner/admin | Bukti native tetap kosong; keputusan terbaru mewajibkan Reviewer agent terpisah, bukan akun GitHub kedua |
+| Perubahan lokal target PHP 8.5.12 | Masih pada branch `chore/m0-workflow-foundation`, belum di-commit/push | CI remote belum memeriksa perubahan lokal |
+
+### Otorisasi publikasi pembaruan PR #1, 2026-11-25
+
+Owner menjawab **“oke silakan”** atas permintaan konkret untuk commit 11 berkas pembaruan M0, push ke `chore/m0-workflow-foundation`, memperbarui deskripsi PR #1, dan memeriksa CI pada commit baru. Paket mencakup keputusan yang sudah disetujui pada PRD §13, penyelarasan dokumen/template/validator, serta perbaikan petunjuk README. Izin ini tidak mencakup merge, perubahan proteksi, deployment, pembuatan Issue, atau Fase 5.
+
+Sebelum publikasi, branch lokal dan remote diperiksa sama-sama pada `1d6f1a987664db8805e140cc1005a9c884c1c59d`; main tetap `833603ddc4c126ee70c7549989b49cec5a6442f7`. Publikasi menambahkan commit pada branch yang sama tanpa amend, rebase, force-push, penghapusan branch, atau pengiriman ref checkpoint agent. Catatan ini merekam otorisasi dan pemeriksaan sebelum push; bukti hasil publikasi dan CI terbaru menjadi bagian deskripsi/checks [PR #1](https://github.com/MuhammadZidniirfan05-dot/batani-company/pull/1). PR tetap draft selama penerimaan review dan kontrol merge belum terpenuhi (PRD §§9.4–9.5, 11).
+
+Konfigurasi main berikut diselaraskan dengan keputusan pemisahan agent dan disiapkan untuk persetujuan owner, mengacu PRD §§9.5, 11. [AGENTS](../AGENTS.md) mewajibkan otorisasi sebelum mengubah proteksi. Keputusan visibility dan workflow tidak dianggap sebagai izin mengaktifkan konfigurasi ini.
+
+| Pengaturan yang diusulkan | Nilai |
+|---|---|
+| Required status check | `M0 validation`, sumber GitHub Actions / App ID `15368` |
+| Required review status | `Agent review`, publisher tepercaya yang masih perlu diintegrasikan |
+| Branch harus mengikuti base terbaru | `strict: true` |
+| PR dan approval native | Wajib PR; `required_approving_review_count: 0` |
+| Approval code owner / push terakhir | `require_code_owner_reviews: false`, `require_last_push_approval: false` |
+| Review setelah perubahan | Head/base berubah membatalkan kelulusan `Agent review`; perlu review ulang, bukan mengandalkan dismissal native approval |
+| Percakapan review | Wajib diselesaikan |
+| Penerapan kepada admin | `enforce_admins: true`; tidak mengandalkan bypass admin |
+| Force-push dan penghapusan main | Keduanya tidak diizinkan |
+
+GitHub mengizinkan required approval count 0; lihat [API branch protection](https://docs.github.com/en/rest/branches/branch-protection). Konfigurasi ini tetap memerlukan integrasi `Agent review` dan verifikasi perilaku aktual sebelum disebut operasional. Penerapan aturan akan menahan merge sampai CI dan status review terpenuhi, termasuk untuk owner. Setelah diizinkan, verifikasi nilai lewat API protection dan status PR; jangan menguji larangan dengan force-push, penghapusan branch, atau percobaan merge pada repository ini. Aktivasi aturan tidak memberikan izin merge, push perubahan lokal, deploy, atau Fase 5. Riwayat di bawah mempertahankan kondisi dan penilaian saat repository masih private.
+
+## Riwayat repository dan bootstrap, 2026-11-24
 
 Fase 3–4 menginisialisasi repository lokal pada branch `chore/m0-workflow-foundation`. Commit awal `833603d` menyimpan [PRD](PRD.md) dan [README](../README.md) asli; `cf440b6` menambahkan fondasi M0. Keduanya dipertahankan tanpa rebase, amend, atau reset. Ref checkpoint milik agent host juga dibiarkan utuh dan tidak termasuk ref yang akan dipublikasikan.
 
@@ -65,6 +119,8 @@ Bukti untuk commit dokumentasi lanjutan dicatat pada deskripsi/checks PR #1 sete
 | Reviewer, model reasoning tinggi | Baca Issue, diff, CI, keamanan dan regresi pada SHA terbaru | APPROVED / CHANGES_REQUESTED / BLOCKED; tidak mengarang bukti |
 | Human Owner | Putuskan perubahan kebutuhan/arsitektur/risiko, akses dan release | Persetujuan tercatat; production approval selalu terpisah |
 
+Planner, Executor, dan Reviewer wajib agent/sesi berbeda. Handoff mencatat ID setiap sesi, ID model aktual dan reasoning jika tersedia, serta dasar pemilihan model Reviewer pada tingkat reasoning/kelas biaya lebih tinggi daripada Executor. Pemisahan sesi saja tidak membuktikan perbedaan model atau biaya. Review penerimaan memerlukan bukti model, reasoning, dan sesi aktual yang sesuai dengan pilihan owner; jangan membuat bukti model atau biaya palsu.
+
 Owner/maintainer mengirim paket handoff secara manual sampai integrasi diverifikasi. Paket minimal: URL Issue, referensi PRD, scope, dependencies, AC, branch/base SHA, PR/head SHA jika ada, hasil CI, risiko, dan temuan terdahulu. Planner/Reviewer mahal hanya dipanggil ketika keputusan atau review substantif diperlukan. Setelah rework, kirim delta dan bukti baru untuk menghindari evaluasi berulang tanpa perubahan.
 
 ## Status dan transisi
@@ -81,7 +137,7 @@ Semua status ini mengikuti PRD §9.2. Tidak ada bot yang memindahkannya saat ini
 | CHANGES_REQUESTED → IN_PROGRESS | Executor | Pengakuan temuan dan rencana koreksi pada PR yang sama |
 | IN_PROGRESS → IN_REVIEW setelah koreksi | Executor | SHA baru, hasil tes/CI baru, respons per temuan |
 | IN_REVIEW → APPROVED | Reviewer | Seluruh AC dan pemeriksaan terpenuhi; tidak ada temuan blocking pada SHA terbaru |
-| APPROVED → MERGED | Owner/maintainer dengan merge permission | Required checks dan review GitHub benar-benar terpenuhi; persetujuan risiko bila perlu |
+| APPROVED → MERGED | Owner/maintainer dengan merge permission | CI dan status `Agent review` tepercaya lulus pada head/base terbaru, proteksi aktif; persetujuan risiko/merge yang relevan tersedia |
 | MERGED → STAGING | Operator rilis yang ditunjuk owner | Deploy staging aktual, artefak/SHA dan hasil verifikasi |
 | STAGING → PRODUCTION_APPROVAL | Operator/owner | UAT, backup dan rollback siap; permintaan persetujuan artefak tertentu |
 | PRODUCTION_APPROVAL → DEPLOYED | Owner menyetujui; operator menjalankan | Approval manusia dan bukti deploy/health check aktual |
@@ -97,7 +153,26 @@ Untuk dokumentasi tanpa artefak deployment, aturan closure belum ditentukan PRD.
 
 CI menjalankan Node untuk validasi dokumen/YAML/form/PR/template deployment yang memang ada, bukan PHP, Laravel, migrasi, atau build frontend. [Validator](../.github/validation/validate.mjs) juga bisa dijalankan lokal dengan perintah [AGENTS](../AGENTS.md). Kelulusan tidak membuktikan seluruh schema GitHub, keamanan menyeluruh, kebenaran isi Issue, maupun integrasi agent. Uji GitHub pertama sudah lulus sebagaimana bukti di atas; required-check enforcement masih belum aktif.
 
-CI gagal → Executor memperbaiki; CI tidak tersedia → BLOCKED untuk approval final. CI lulus → Reviewer memeriksa acceptance criteria. CHANGES_REQUESTED wajib menyertakan finding, file/lokasi, severity, alasan, koreksi, dan verifikasi; gunakan [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md). Perbarui PR yang sama. Komentar AI tidak menggantikan required check atau persetujuan manusia.
+CI gagal → Executor memperbaiki; CI tidak tersedia → BLOCKED untuk approval final. CI lulus → Reviewer terpisah memeriksa acceptance criteria. CHANGES_REQUESTED wajib menyertakan finding, file/lokasi, severity, alasan, koreksi, verifikasi, dan prompt siap salin untuk Executor; gunakan [REVIEW-CHECKLIST](REVIEW-CHECKLIST.md). Executor memperbaiki PR yang sama dan meminta review atas head terbaru. Komentar AI tidak menggantikan status review yang diverifikasi atau persetujuan manusia untuk risiko/rilis.
+
+### Publisher hasil review tepercaya — rancangan
+
+Owner atau broker tepercaya menyimpan kredensial penulis status. Lingkungan Executor tidak menerima kredensial status/admin/production. Pemisahan ini memerlukan kontrol lingkungan dan izin yang nyata; instruksi tertulis saja belum menjamin pemisahan.
+
+Publisher menerima hasil Reviewer dari sesi terpisah, memverifikasi identitas peran/model, lalu mencocokkan repository, nomor/URL PR, head SHA, base SHA, dan hasil CI aktual. Hasil hanya berlaku selama pasangan head/base tersebut masih berlaku.
+
+| Hasil yang diverifikasi | Status `Agent review` |
+|---|---|
+| APPROVED dan CI lulus untuk perubahan yang masih berlaku | `success` |
+| CHANGES_REQUESTED | `failure` |
+| Review berjalan atau bukti sementara belum lengkap | `pending` |
+| BLOCKED atau verifikasi definitif gagal | `error` atau `pending`, selalu menahan merge |
+
+Status hilang juga menahan merge bila konteks sudah diwajibkan. Perubahan head/base atau invalidasi CI harus membatalkan kelulusan sebelumnya dan memicu pemeriksaan ulang. Publisher harus mencegah pemalsuan, replay hasil lama, dan penerbitan success untuk commit yang berubah saat diproses. Pengujian harus mencakup kondisi gagal/hilang/usang/tidak tepercaya dan keterkaitan status dengan SHA yang dinilai GitHub sebelum merge. Belum ada implementasi atau pengujian mekanisme tersebut.
+
+Status commit dapat diterbitkan oleh identitas pengguna yang berwenang; akun GitHub kedua atau GitHub App bukan satu-satunya solusi. Kredensial dengan akses tulis dapat menerbitkan status, sehingga distribusi kredensial menjadi batas kepercayaan. GitHub App dengan pengikatan sumber merupakan opsi penguatan; API pembuatan Check Run berbeda dan memerlukan GitHub App. Sumber: [commit statuses](https://docs.github.com/en/rest/commits/statuses), [protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [check runs](https://docs.github.com/en/rest/checks/runs).
+
+Tidak dibuat workflow yang selalu hijau atau status fiktif untuk memenuhi nama check. Selama publisher dan proteksi belum aktif, verifikasi masih manual dan merge tetap tertahan menurut PRD §11. Implementasi dan aktivasi memerlukan scope/otorisasi tersendiri; merge, deploy, dan Fase 5 belum diizinkan.
 
 ## Konfigurasi GitHub oleh admin, belum diterapkan
 
@@ -105,11 +180,13 @@ CI gagal → Executor memperbaiki; CI tidak tersedia → BLOCKED untuk approval 
 
 1. Verifikasi pemilik, visibility, plan, akses admin repository, izin Actions, serta kebijakan organisasi. Projects membutuhkan akses tersendiri; scope token saat inspeksi tidak membuktikan akses itu.
 2. Setelah baseline main tersedia, buat PR fondasi dan jalankan CI. Ambil nama check yang benar dari run aktual; pilih `M0 validation` dari aplikasi GitHub Actions. Jangan mewajibkan check Laravel/build yang belum ada.
-3. Pada main, wajibkan PR, minimal satu approval Reviewer GitHub yang berwenang dan berbeda dari pembuat PR, dismissal stale approvals, penyelesaian percakapan, dan required status check untuk commit terbaru. Aktifkan pemeriksaan branch up-to-date bila sesuai kebijakan repo. Perubahan berisiko juga memerlukan keputusan owner tertulis.
-4. Batasi bypass kepada manusia berwenang; agent tidak boleh memiliki bypass. Larang force-push/deletion main. Tinjau dampak sebelum mengubah aturan; jangan membuat aturan yang menutup satu-satunya jalur bootstrap sebelum check pertama tersedia.
-5. AI review hanya menjadi review/check GitHub bila integrasinya memang memasukkan hasil ke API yang sesuai. Tetap pisahkan keputusan owner dan kendali produksi. Jika hanya satu akun yang membuat PR, siapkan reviewer lain atau akun integrasi terpisah sesuai aturan; jangan menganggap self-approval cukup.
+3. Terapkan rancangan pada tabel proteksi setelah izin owner: wajib PR, native approval count 0, required CI dan `Agent review`, percakapan selesai, serta branch mengikuti base terbaru. Selesaikan integrasi/pengujian publisher sebelum menyebut gate operasional. Perubahan berisiko tetap memerlukan keputusan owner tertulis.
+4. Terapkan aturan termasuk admin tanpa bypass agent. Larang force-push/deletion main. Jangan menghapus gate review karena penerbit status belum siap; catat kondisi pending/BLOCKED.
+5. Satu akun GitHub diterima. Gunakan hasil dari Reviewer agent terpisah dan publisher tepercaya; self-approval native atau komentar yang belum diverifikasi tidak memenuhi gate. Pisahkan kelayakan merge dari kendali produksi.
 
 Branch protection pada repository private memerlukan plan yang mendukung. Jika kontrol tidak tersedia, jangan mengklaim PR aman untuk merge menurut PRD §11; catat BLOCKED dan minta keputusan owner tentang plan atau mekanisme setara. Panduan: [protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
+
+Langkah berikut sesuai PRD §§9.1, 9.5, 11 adalah menerapkan pilihan model/peran pada sesi terpisah dan mencatat bukti setiap run, menyiapkan publisher dan isolasi izin, memverifikasi gate, lalu mengaktifkan aturan dengan izin owner. Undangan akun GitHub kedua tidak lagi diwajibkan. HTTP 403 pada 2026-11-24 adalah bukti historis; setelah owner mengubah visibility menjadi public, proteksi masih belum dikonfigurasi. Tidak ada pengaturan GitHub yang diubah dalam penyelarasan kebijakan ini.
 
 ### Label dan Projects
 
@@ -135,6 +212,6 @@ GitHub membatasi required environment reviewers di repository private menurut pl
 
 ## Integrasi agent yang masih manual
 
-Belum ada GitHub App, webhook, pemanggilan model, dispatcher, maupun reviewer bot. Sebelum menyebut alur otomatis: tentukan identitas/model dan budget, scope API minimal (contents/PR/Issues hanya sesuai tugas, Projects bila perlu), pengelolaan secret, sandbox terpisah, timeout/retry, idempotensi agar tidak membuat Issue/PR duplikat, dan log audit yang sudah diredaksi. Jangan memberikan administrasi repository atau production credential kepada Executor.
+Belum ada GitHub App, webhook, pemanggilan model dari workflow repository, dispatcher, maupun reviewer bot. Sebelum menyebut alur otomatis: gunakan identitas/model yang disepakati, catat bukti aktual, dan tentukan budget, scope API minimal (contents/PR/Issues hanya sesuai tugas, Projects bila perlu), pengelolaan secret, sandbox terpisah, timeout/retry, idempotensi agar tidak membuat Issue/PR duplikat, dan log audit yang sudah diredaksi. Jangan memberikan administrasi repository atau production credential kepada Executor.
 
 Bukti penerimaan nanti: satu Issue nyata yang diizinkan owner menghasilkan branch/PR, CI pada SHA yang benar, review, satu koreksi pada PR yang sama, lalu review ulang. Catat siapa menjalankan tiap langkah, izin, hasil, dan biaya. Tidak perlu deployment untuk membuktikan loop pengembangan tersebut; release tetap gate terpisah. Backlog usulan ada di [ROADMAP](ROADMAP.md); Fase 5 belum diizinkan.

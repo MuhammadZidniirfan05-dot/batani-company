@@ -20,6 +20,8 @@ Gunakan [feature](../.github/ISSUE_TEMPLATE/feature.yml), [bug](../.github/ISSUE
 
 Planner memeriksa kelengkapan dan ukuran tugas, lalu owner/maintainer yang berwenang menetapkan READY setelah dependensi selesai dan keputusan berisiko disetujui. Cantumkan Executor yang ditugaskan, Reviewer terpisah, dan owner keputusan. Prioritas P0–P3 dan risiko low/medium/high memakai definisi [runbook](AGENT-WORKFLOW.md).
 
+Handoff mencatat agent/sesi Planner, Executor, dan Reviewer yang terpisah, model aktual, serta dasar pilihan Reviewer pada tingkat reasoning dan kelas biaya lebih tinggi. Akun GitHub boleh sama. Acceptance criteria untuk pekerjaan integrasi review harus menguji penolakan pada hasil gagal, hilang, usang, dan tidak tepercaya; komentar APPROVED saja bukan bukti gate aktif. Acuan: PRD §§9.1, 9.3–9.5, 11, 13.
+
 Issue yang belum memiliki jawaban untuk dependensi kritis tetap BACKLOG atau BLOCKED, disertai alasan dan pihak pembuka hambatan. Jangan melewati pemeriksaan hanya karena field form terisi. Form mewajibkan input, tetapi tidak membuktikan isinya benar atau memenuhi acceptance criteria.
 
 ## PR dan closure

@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 import { parseDocument } from 'yaml';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const expectedPrdHash = '74dcb4f05de25976da06cef2d569fcd86e8e0c22b4ebdfb4fef7ebd3aa9bbd33';
+// PRD v1.4, §13: PHP 8.5.12, agent terpisah/satu akun, model disetujui dan penegasan Blade.
+const expectedPrdHash = '410367994fc941e0a05fa5eecc8d3cda311b92d4509876fd65ac780a24d5fa71';
 const documents = [
   'AGENTS.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-WORKFLOW.md',
   'docs/ROADMAP.md', 'docs/ISSUE-GUIDELINES.md', 'docs/REVIEW-CHECKLIST.md',
@@ -153,9 +154,9 @@ export function main() {
   for (const file of requiredFiles) {
     check(`required ${file}`, () => requireThat(existsSync(resolve(root, file)) && statSync(resolve(root, file)).size > 0, 'Berkas wajib hilang/kosong'));
   }
-  check('PRD baseline unchanged (normalized LF)', () => {
+  check('PRD matches approved baseline (normalized LF)', () => {
     const content = readFileSync(resolve(root, 'docs/PRD.md'), 'utf8').replace(/\r\n/g, '\n');
-    requireThat(createHash('sha256').update(content).digest('hex') === expectedPrdHash, 'PRD berubah; baseline approved tidak boleh ditulis ulang');
+    requireThat(createHash('sha256').update(content).digest('hex') === expectedPrdHash, 'PRD tidak sesuai baseline approved; perubahan memerlukan keputusan owner tercatat');
   });
   for (const file of documents) {
     check(`PRD reference ${file}`, () => requireThat(readFileSync(resolve(root, file), 'utf8').includes('PRD.md'), 'Dokumen harus merujuk PRD'));

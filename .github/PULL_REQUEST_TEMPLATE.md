@@ -50,6 +50,20 @@ ID temuan → perbaikan → SHA → verifikasi. Gunakan PR yang sama untuk rewor
 
 ## Checklist reviewer
 
+Handoff dan hasil review agent:
+
+- Planner — ID agent/sesi, model:
+- Executor — ID agent/sesi, model:
+- Reviewer — ID agent/sesi, model/reasoning: pending bila belum ditugaskan.
+- Dasar pemilihan tingkat reasoning dan kelas biaya Reviewer:
+- Head/base SHA yang direview:
+- Bukti CI untuk head tersebut:
+- Laporan Reviewer dan keputusan: pending / APPROVED / CHANGES_REQUESTED / BLOCKED.
+- Bukti status `Agent review`: belum diterbitkan atau tautan aktual.
+- Prompt koreksi Executor bila CHANGES_REQUESTED:
+
+Satu akun GitHub diperbolehkan; agent/sesi tiap peran tetap wajib berbeda. Jangan mengisi bukti yang belum ada. Laporan agent bukan approval native GitHub. Koreksi dan review ulang dilakukan pada PR ini; perubahan head/base memerlukan hasil terbaru. Acuan: PRD §§9.4, 9.5, 11, 13.
+
 - [ ] Referensi PRD dan scope sesuai Issue/otorisasi bootstrap.
 - [ ] Acceptance criteria dipetakan ke bukti aktual pada SHA terbaru.
 - [ ] Required checks lulus di GitHub; hasil lokal diberi label lokal.

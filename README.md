@@ -10,7 +10,7 @@ Website profil perusahaan berbasis **Laravel, MySQL, dan Filament**, dikembangka
 
 Aturan prioritas:
 1. `docs/PRD.md` adalah sumber kebenaran kebutuhan produk (*single source of truth*).
-2. `AGENTS.md` (setelah dibuat) mengatur perilaku dan batasan semua AI coding agents.
+2. [`AGENTS.md`](AGENTS.md) mengatur perilaku dan batasan semua AI coding agents.
 3. GitHub Issue menentukan ruang lingkup tugas yang disetujui berdasarkan PRD.
 4. Pull Request memuat implementasi dan bukti pengujian tugas tersebut.
 5. Jika Issue atau instruksi agent bertentangan dengan PRD, hentikan pekerjaan yang terdampak dan minta keputusan pemilik produk; **jangan mengubah PRD diam-diam**.
@@ -41,15 +41,15 @@ Konten akan dikelola melalui CMS Filament sesuai hak akses. Arah desain adalah *
 
 | Komponen | Teknologi / status |
 |---|---|
-| Bahasa | **PHP 8.6 — target yang diminta; kompatibilitas harus diverifikasi** |
+| Bahasa | **PHP 8.5.12 — target yang disetujui; kompatibilitas harus diverifikasi** |
 | Framework | Laravel 13 — target, tergantung verifikasi kompatibilitas |
 | Database | MySQL 8.x |
 | CMS admin | Filament 5 — target, tergantung verifikasi kompatibilitas |
-| Frontend | Blade, Tailwind CSS, Alpine.js, Vite (tahap berikutnya) |
+| Frontend | Laravel Blade untuk tampilan publik, Tailwind CSS, Alpine.js, Vite; implementasi setelah workflow berjalan dan M0 diterima |
 | Testing | Pest atau PHPUnit (ditetapkan saat perencanaan teknis) |
 | Kolaborasi | GitHub Issues, Projects, Pull Requests, Actions |
 
-Tidak boleh mengklaim PHP, framework, atau dependency sudah siap sebelum diperiksa. Jika PHP 8.6 tidak kompatibel dengan salah satu komponen, catat hambatan dan ajukan opsi kepada pemilik produk. **Jangan menurunkan versi PHP tanpa persetujuan.**
+Target PHP **8.5.12** menggantikan 8.6 sesuai keputusan eksplisit owner pada 2026-11-24 ([PRD §13](docs/PRD.md#13-change-control-and-precedence)). Ini target resmi, bukan workaround sementara. Tidak boleh mengklaim PHP, framework, atau dependency sudah siap sebelum diperiksa. Jika PHP 8.5.12 tidak kompatibel dengan salah satu komponen, catat hambatan dan ajukan opsi kepada pemilik produk. **Jangan mengubah versi PHP tanpa persetujuan.**
 
 ## 4. Workflow pengembangan multi-agent
 
@@ -89,6 +89,10 @@ Kembali ke Executor     Merge sesuai proteksi branch
 
 > Keterangan: Diagram di atas adalah **workflow target**, bukan klaim bahwa agent GitHub atau deployment otomatis sudah terpasang.
 
+Satu akun GitHub diperbolehkan, tetapi Planner, Executor, dan Reviewer wajib agent/sesi terpisah. CI dan review terbaru yang lulus menjadi syarat kelayakan merge; penolakan harus disertai alasan dan prompt koreksi untuk Executor pada PR yang sama. Approval native dari akun GitHub kedua tidak diwajibkan. Acuan: [PRD](docs/PRD.md) §§9, 11, 13.
+
+Model/peran telah disepakati: Planner dan Reviewer memakai `gpt-6-astra` dengan reasoning `high`, sedangkan Executor/Worker memakai `gpt-6.1-sol` dengan reasoning `medium`, pada agent/sesi terpisah. Pilihan tersebut belum menjadi bukti penerapan setiap run. Integrasi status `Agent review`, isolasi kredensial, dan verifikasi kontrol merge masih pending. Blade yang sudah tercantum pada baseline ditegaskan untuk tampilan publik; implementasinya menunggu workflow berjalan dan penerimaan M0. Acuan: [PRD](docs/PRD.md) §§3, 9.1, 13.
+
 ## 5. Milestone awal: M0 — GitHub Workflow Foundation
 
 M0 diprioritaskan sebelum implementasi fitur website. Ruang lingkupnya mencakup:
@@ -105,22 +109,29 @@ M0 diprioritaskan sebelum implementasi fitur website. Ruang lingkupnya mencakup:
 
 ## 6. Cara memulai di VS Code
 
-1. Buat repository GitHub baru bernama `company-profile-cms` (disarankan **Private**).
-2. Clone ke komputer dan buka menggunakan VS Code.
-3. Simpan dokumen PRD resmi pada **`docs/PRD.md`** dan file ini sebagai **`README.md`** di root repository.
-4. Commit dan push kedua dokumen sebelum memulai pekerjaan agent.
-5. Pilih **Planner Agent** dan minta ia membaca `docs/PRD.md` terlebih dahulu.
-6. Jalankan **M0 secara bertahap**: audit kebutuhan dan rencana → verifikasi pemilik → pembuatan file workflow → pemeriksaan hasil.
+1. Gunakan repository resmi **Public** [`MuhammadZidniirfan05-dot/batani-company`](https://github.com/MuhammadZidniirfan05-dot/batani-company), sesuai keputusan owner 24 November 2026 dan penegasan visibilitas Public pada 25 November 2026.
+2. Untuk workspace yang sudah tersedia, buka folder `D:/laragon/www/batani-company` di VS Code tanpa clone ulang.
+3. Baca seluruh [`docs/PRD.md`](docs/PRD.md), [`AGENTS.md`](AGENTS.md), dan [`docs/AGENT-WORKFLOW.md`](docs/AGENT-WORKFLOW.md). Periksa status Git dan perubahan lokal sebelum bekerja; pertahankan pekerjaan yang sudah ada.
+4. Lanjutkan persiapan PR M0 pada branch `chore/m0-workflow-foundation`. Jalankan validasi lokal dan lengkapi bukti serta deskripsi PR, lalu minta izin owner sebelum push.
+5. Pertahankan Planner, Executor, dan Reviewer pada agent/sesi terpisah. Penerimaan M0 memerlukan pemeriksaan CI dan review sesuai [`docs/PRD.md`](docs/PRD.md) §§9, 11, dan 13, termasuk verifikasi kontrol GitHub yang benar-benar aktif sebelum merge.
+6. Tahap ini tidak mencakup pembuatan repository atau Issue baru, scaffolding aplikasi, deployment, maupun Fase 5.
 
-Contoh perintah setelah repository tersedia:
+Untuk membuka workspace yang sudah ada:
 
 ```powershell
-git clone https://github.com/MuhammadZidniirfan05-dot/company-profile-cms.git
-cd company-profile-cms
+Set-Location D:/laragon/www/batani-company
 code .
 ```
 
-Perintah di atas mengasumsikan repository menggunakan nama yang disarankan dan sudah dibuat. Jangan jalankan perintah aplikasi Laravel sebelum M0 selesai dan stack dinyatakan kompatibel.
+Clone hanya diperlukan jika membuat checkout baru, dari direktori induk yang belum memiliki folder tujuan:
+
+```powershell
+git clone https://github.com/MuhammadZidniirfan05-dot/batani-company.git
+Set-Location batani-company
+code .
+```
+
+Jangan jalankan perintah aplikasi Laravel sebelum M0 diterima dan stack dinyatakan kompatibel.
 
 ## 7. Standar keamanan dan kontribusi
 
@@ -136,9 +147,9 @@ Perintah di atas mengasumsikan repository menggunakan nama yang disarankan dan s
 | Dokumen | Peran |
 |---|---|
 | [`docs/PRD.md`](docs/PRD.md) | Kebutuhan resmi dan kriteria penerimaan produk |
-| `AGENTS.md` | Aturan bersama agent (dibuat di M0) |
-| `docs/AGENT-WORKFLOW.md` | Mekanisme tugas, review, rework, dan persetujuan (dibuat di M0) |
-| `docs/ARCHITECTURE.md` | Keputusan arsitektur (dibuat di M0) |
-| `.github/` | Template Issue/PR dan workflow CI/CD (dibuat di M0) |
+| [`AGENTS.md`](AGENTS.md) | Aturan bersama agent |
+| [`docs/AGENT-WORKFLOW.md`](docs/AGENT-WORKFLOW.md) | Mekanisme tugas, review, rework, persetujuan, dan rencana publikasi M0 |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Keputusan arsitektur |
+| [`.github/`](.github/) | Template Issue/PR dan workflow validasi M0 |
 
-**Langkah berikutnya:** minta Planner memulai dengan **membaca `docs/PRD.md` dan mempresentasikan audit M0 terlebih dahulu**, bukan langsung menulis fitur website.
+**Langkah berikutnya:** selesaikan persiapan publikasi PR M0 pada branch yang sama, jalankan validasi lokal, lalu minta izin owner sebelum push. Verifikasi CI, review terpisah, dan kontrol GitHub sesuai [`docs/PRD.md`](docs/PRD.md) §§9, 11, dan 13 sebelum penerimaan M0; pekerjaan tetap berhenti sebelum Fase 5.

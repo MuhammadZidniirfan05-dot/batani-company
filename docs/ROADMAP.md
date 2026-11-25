@@ -7,7 +7,7 @@ Acuan: [PRD](PRD.md) §§9.6, 10–13. Ini rencana dependensi, bukan janji tangg
 | Milestone | Hasil | Dependensi / gate |
 |---|---|---|
 | M0 | Dokumen agent, kontrak Issue/PR, CI aman, runbook GitHub, bukti kompatibilitas | Review owner; repository dan kontrol terverifikasi sebelum disebut operasional |
-| M1 | Laravel 13 + MySQL 8.x + Filament 5, auth/roles, CI aplikasi | M0 diterima dan runtime PHP 8.6/dependensi/host disetujui (§3) |
+| M1 | Laravel 13 + MySQL 8.x + Filament 5, auth/roles, CI aplikasi | M0 diterima dan kompatibilitas runtime PHP 8.5.12/dependensi/host diterima (§3) |
 | M2 | Company/profile CMS, executive, experts, structure, goals, values, achievements, homepage content | Fondasi dan izin M1; FR-002–010, CMS-002–005 |
 | M3 | News, satu bagian Publikasi dan Kajian, Project IT | Arsitektur publikasi dan izin; FR-011–013, CMS-006–008 |
 | M4 | Search, contact, SEO | Konten/status M2–M3; FR-014–016, CMS-009/011 |
@@ -16,7 +16,7 @@ Acuan: [PRD](PRD.md) §§9.6, 10–13. Ini rencana dependensi, bukan janji tangg
 
 M0 tidak membuat aplikasi, migrasi, resource Filament, UI, konten bisnis, search berbayar, atau deployment. Fase percakapan 3–4 menghasilkan paket fondasi; itu tidak otomatis menandakan seluruh milestone M0 diterima. Fase 5 memerlukan persetujuan owner terpisah.
 
-Fase 4.5 menghubungkan folder lokal ke repository resmi yang dipilih owner. Setelah persetujuan publikasi, baseline main dan branch fondasi sudah tersedia, [draft PR #1](https://github.com/MuhammadZidniirfan05-dot/batani-company/pull/1) dibuat, dan CI push/pull_request berhasil pada head awal `f2e5512`. Bagian teknis repository/bootstrap M0-B sudah terbukti, tetapi penerimaan owner M0-A tetap terpisah. M0-C baru memenuhi eksekusi CI; enforcement checks/review masih BLOCKED karena API proteksi branch/ruleset mengembalikan HTTP 403 keterbatasan plan repository private. M0-D/F/G belum diaktifkan; gate teknologi M0-E belum lulus. Bukti dan batas kewenangan: [AGENT-WORKFLOW](AGENT-WORKFLOW.md), mengacu PRD §§3, 9.5, 11, 13. Tidak ada izin memulai Fase 5.
+Fase 4.5 menghubungkan folder lokal ke repository resmi yang dipilih owner. Setelah persetujuan publikasi, baseline main dan branch fondasi sudah tersedia, [draft PR #1](https://github.com/MuhammadZidniirfan05-dot/batani-company/pull/1) dibuat, dan CI push/pull_request berhasil pada head awal `f2e5512` serta head `1d6f1a9`. Bagian teknis repository/bootstrap M0-B sudah terbukti, tetapi penerimaan owner M0-A tetap terpisah. Pada 2026-11-25 owner mengubah repository menjadi public; API mengonfirmasi PUBLIC, proteksi main belum ada (HTTP 404 `Branch not protected`), dan rulesets kosong. Hambatan plan sebelumnya selesai, tetapi M0-C masih menunggu izin aktivasi proteksi dan reviewer independen. Snapshot sebelum publikasi pembaruan masih memakai check `M0 validation` sukses pada `1d6f1a9`; hasil itu tidak memvalidasi paket PHP 8.5.12 dan PRD v1.4. Owner kemudian mengizinkan commit/push paket pada branch yang sama, pembaruan deskripsi PR #1, dan pemeriksaan CI baru; SHA serta hasil aktual dicatat pada PR setelah publikasi. M0-D/F/G belum diaktifkan; gate teknologi M0-E belum lulus. Bukti dan rencana konfigurasi: [AGENT-WORKFLOW](AGENT-WORKFLOW.md), mengacu PRD §§3, 9.5, 11, 13. Tidak ada izin memulai Fase 5.
 
 ## Backlog rancangan lokal
 
@@ -26,13 +26,19 @@ ID berikut adalah ID rencana, bukan nomor atau Issue GitHub. Tidak ada Issue yan
 |---|---|---|---|
 | M0-A: review dan penerimaan paket Fase 3–4 | Berkas dan hasil validasi lokal | Owner mencatat keputusan atas diff dan batas fase; temuan ditutup | §9.6, §11 |
 | M0-B: repository, remote, hak akses, bootstrap main | Keputusan owner atas nama/visibility/plan; M0-A | URL/permission terverifikasi; baseline main sesuai; PR feature dapat dibuat tanpa force-push | §9.5, §13 |
-| M0-C: jalankan CI dan enforce checks/review | M0-B, izin admin | Run pada commit aktual lulus; PR tanpa check/approval tertahan; bukti konfigurasi tersedia | §9.5, §11 |
+| M0-C: jalankan CI dan enforce checks/review | M0-B, izin admin; finalisasi setelah publisher/gate M0-F teruji | CI dan `Agent review` aktual lulus; PR dengan hasil gagal/hilang/usang/tidak tepercaya tertahan; proteksi terverifikasi | §9.5, §11 |
 | M0-D: labels, Projects, transisi dan ownership | M0-B, izin Projects | Label dan seluruh status tersedia; simulasi transisi tercatat; aturan DONE dokumentasi diputuskan | §9.2–9.5 |
-| M0-E: validasi runtime dan dependensi PHP 8.6 | Paket/extension/test runner kandidat; lingkungan uji | Install tanpa bypass, platform check dan tes nyata berhasil; host mendukung atau blocker dicatat | §3, §9.6 |
-| M0-F: integrasi Planner/Executor/Reviewer | M0-C/D, keputusan model/biaya/izin | Satu tugas percobaan menjalani Issue → PR → CI → review → rework PR yang sama; SHA/log/biaya tercatat | §2, §9.1–9.5 |
+| M0-E: validasi runtime dan dependensi PHP 8.5.12 | Paket/extension/test runner kandidat; lingkungan uji | Install tanpa bypass, platform check dan tes nyata berhasil; host mendukung atau blocker dicatat | §3, §9.6 |
+| M0-F: integrasi Planner/Executor/Reviewer dan publisher | M0-B/D, rancangan M0-C, keputusan model/biaya/izin | Agent/sesi terpisah, satu akun GitHub boleh; publisher/isolasi izin teruji; tugas percobaan Issue → PR → CI → review → rework PR yang sama; SHA/log/model/biaya tercatat | §2, §9.1–9.5 |
 | M0-G: rancangan release controls | Host/plan, M0-C | Pemisahan kewenangan, staging, approval, backup/rollback direview; template tetap disabled | §8, §9.6, §11 |
 
 M0-E dapat diteliti sambil dokumentasi berjalan. Bukti end-to-end tidak boleh diklaim hanya dari formulir, akun CLI, atau YAML. Jika gate runtime belum lulus, M1 tetap tertahan walaupun dokumen M0 selesai.
+
+Keputusan workflow owner 2026-11-25 pada PRD §13 menggantikan usulan wajib satu approval dari akun GitHub lain. Pilihan model telah disepakati: terapkan Planner/Reviewer `gpt-6-astra` / `high` dan Executor/Worker `gpt-6.1-sol` / `medium` pada agent/sesi terpisah; catat bukti model dan reasoning aktual serta siapkan handoff. Implementasikan publisher `Agent review` tepercaya dan pemisahan izin; buktikan CI gagal, review ditolak, status hilang/usang, serta pemalsuan/replay tetap menahan merge. Finalisasi proteksi M0-C setelah pengujian integrasi M0-F dan otorisasi owner; M0-F memakai rancangan M0-C agar dependensi tidak melingkar. Akun GitHub kedua tidak wajib. Seluruh integrasi tersebut masih pending dan tidak mengizinkan Fase 5.
+
+Tampilan publik menggunakan Laravel Blade sesuai penegasan owner pada PRD §§3, 13. Implementasi tampilan menunggu workflow berjalan dan M0 diterima; desain tetap mengikuti milestone M5 dan otorisasi fase berikutnya.
+
+Keputusan owner 2026-11-24 mengganti target PHP 8.6 menjadi **8.5.12** (PRD §13). Perubahan ini memperbarui sasaran M0-E, tetapi tidak meluluskan gate teknologi maupun membuka Fase 5. Bukti terbaru dan ketidaksamaan runtime terminal ada di [PHP-COMPATIBILITY](PHP-COMPATIBILITY.md).
 
 ## Penerimaan dan blocker
 

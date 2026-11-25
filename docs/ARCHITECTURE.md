@@ -23,11 +23,15 @@ Planner -> Issue READY -> Executor / feature branch -> Pull Request
 
 Bagian setelah review adalah target fase berikutnya, bukan otomasi yang telah terpasang. Saat ini hanya dokumentasi, template, dan validator lokal/konfigurasi CI yang disiapkan. Agent tidak dipanggil oleh workflow. Detail: [runbook](AGENT-WORKFLOW.md).
 
+Batas kepercayaan workflow memisahkan agent/sesi Planner, Executor, Reviewer, dan publisher hasil review. Identitas GitHub boleh sama, tetapi kredensial publisher/admin tidak dibagikan ke lingkungan Executor. Publisher memverifikasi hasil Reviewer dan CI terhadap repository/PR/head/base sebelum menerbitkan status `Agent review`. Native approval dari akun kedua tidak diwajibkan. Pilihan model telah disepakati: Planner/Reviewer `gpt-6-astra` / `high` dan Executor/Worker `gpt-6.1-sol` / `medium`, pada agent/sesi terpisah. Integrasi, isolasi izin, bukti penerapan aktual, serta pengujian penolakan belum diimplementasikan. Acuan: PRD §§9.1, 9.5, 11, 13.
+
 ## Rancangan aplikasi setelah gate
+
+Tampilan publik menggunakan Laravel Blade yang sudah ada pada baseline dan ditegaskan kembali oleh owner. Implementasinya ditunda sampai workflow berjalan dan M0 diterima (PRD §§3, 13).
 
 | Lapisan | Target dan tanggung jawab | Acuan PRD |
 |---|---|---|
-| Runtime/backend | PHP 8.6, Laravel 13; kebijakan, validasi, publikasi, dan koordinasi layanan | §3, §4, §6.3 |
+| Runtime/backend | PHP 8.5.12, Laravel 13; kebijakan, validasi, publikasi, dan koordinasi layanan | §3, §4, §6.3 |
 | Public web | Blade, Tailwind CSS, Alpine.js, Vite; konten terbit dan navigasi tetap | §3, §5, FR-001–016 |
 | CMS | Filament 5; resource, dashboard, media, pengaturan, role, audit | CMS-001–014 |
 | Database | MySQL 8.x; kandidat minor 8.4 LTS, belum dikunci; skema/index ditinjau sebelum migrasi | §3, §7 |
@@ -43,7 +47,7 @@ Laravel policies/permissions wajib memeriksa akses di server, bukan sekadar meny
 - Tentang Kami; Layanan dengan tujuh submenu sesuai PRD §5; Publikasi dengan tepat Berita, Publikasi dan Kajian, Project IT; Kontak; Search. Logo menuju homepage.
 - Publikasi dan Kajian memiliki satu listing/submenu publik. Satu model bertipe atau dua model dengan presentasi gabungan masih opsi arsitektur, bukan dua menu.
 - Project IT tetap di bawah Publikasi. Jangan memindahkan kategori profil dari Layanan.
-- Target PHP 8.6 tidak diganti oleh runtime lokal 8.5. Penilaian ada di [PHP-COMPATIBILITY](PHP-COMPATIBILITY.md).
+- Target PHP 8.5.12 menggantikan 8.6 atas keputusan owner yang tercatat pada PRD §13. Runtime CLI, web, CI, dan hosting harus diverifikasi terhadap target ini; penilaian ada di [PHP-COMPATIBILITY](PHP-COMPATIBILITY.md).
 
 ## Data dan keamanan yang perlu dirancang
 
@@ -61,7 +65,7 @@ M1 menambahkan pengujian aplikasi nyata setelah runtime diterima. M2–M4 menamb
 
 | Keputusan | Penanggung jawab | Batas sebelum |
 |---|---|---|
-| Runtime/dependensi/extension/host PHP 8.6 dan Pest atau PHPUnit | Planner menyiapkan bukti, owner menerima | Scaffolding M1 |
+| Runtime/dependensi/extension/host PHP 8.5.12 dan Pest atau PHPUnit | Planner menyiapkan bukti, owner menerima | Scaffolding M1 |
 | Plan, kontrol merge, identitas dan biaya agent; repository resmi sudah dipilih owner pada Fase 4.5 | Owner + Planner | Aktivasi alur GitHub; bukti di [runbook](AGENT-WORKFLOW.md) |
 | Model publications/studies dan editorial governance | Planner + owner | M3 |
 | Batas editor navigasi vs struktur tetap | Owner | CMS-014 |
