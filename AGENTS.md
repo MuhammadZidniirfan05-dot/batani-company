@@ -12,8 +12,9 @@ Acuan: [PRD](docs/PRD.md) §§3, 9, 11, 13. Berlaku untuk seluruh repository dan
 
 ## Batas pekerjaan
 
+- Otorisasi workflow terbaru pada PRD §13 v1.5 mengizinkan penyelesaian workflow lokal dan GitHub yang diperlukan, termasuk Issue/PR, publikasi dan konfigurasi. Batas Fase 3–4/4.5 di bawah merupakan riwayat otorisasi awal; gunakan keputusan terbaru untuk tugas workflow yang kini diizinkan. Persyaratan keamanan, preservasi, pengujian, dan gate tetap berlaku. Kabari owner sebelum masuk coding aplikasi; jangan mulai aplikasi, deploy atau Fase 5.
 - Keputusan owner 2026-11-25 pada PRD §13 memperbolehkan satu akun GitHub. Planner, Executor, dan Reviewer wajib agent/sesi terpisah; jangan mereview implementasi sendiri sebagai review independen.
-- Catat ID agent/sesi, model aktual, dan reasoning jika tersedia. Pilihan owner 2026-11-25 pada PRD §§9.1, 13 adalah Planner dan Reviewer `gpt-6-astra` / `high`, serta Executor/Worker `gpt-6.1-sol` / `medium`, masing-masing pada agent/sesi terpisah. Reviewer menggunakan tingkat reasoning dan kelas biaya lebih tinggi daripada Executor berdasarkan pilihan ini. Konfigurasi target tidak menggantikan bukti model, reasoning, dan sesi aktual setiap run.
+- Catat ID agent/sesi, model aktual, dan reasoning jika tersedia. Keputusan owner lanjutan 2026-11-25 pada PRD §§9.1, 13 menetapkan seluruh peran fondasi workflow memakai `gpt-6-astra` / `high`, termasuk Worker tooling. Untuk aplikasi, Planner/Reviewer tetap `gpt-6-astra` / `high` dan Worker `gpt-6.1-sol` / `medium`. Setiap peran tetap agent/sesi terpisah; perbedaan kelas biaya Reviewer terhadap Worker berlaku pada aplikasi. Konfigurasi target tidak menggantikan bukti model, reasoning, dan sesi aktual setiap run.
 - Tampilan publik menggunakan Laravel Blade yang sudah ada pada baseline dan ditegaskan kembali oleh owner pada 2026-11-25 (PRD §§3, 13). Implementasi tampilan ditunda sampai workflow berjalan dan M0 diterima; keputusan ini tidak mengizinkan scaffolding atau Fase 5.
 - Approval native dari akun kedua bukan gate wajib. Gate yang direncanakan adalah CI terbaru dan status `Agent review` yang diterbitkan secara tepercaya untuk head/base yang masih berlaku. Komentar AI saja tidak mengaktifkan gate.
 - Executor tidak boleh menerbitkan status kelulusan review, memperoleh kredensial publisher/admin/production dalam lingkungan eksekusinya, atau melewati hasil yang gagal, hilang, usang, dan belum terverifikasi. Pemisahan izin dan integrasi ini belum diimplementasikan.
@@ -46,6 +47,7 @@ Acuan: [PRD](docs/PRD.md) §§3, 9, 11, 13. Berlaku untuk seluruh repository dan
   ```text
   npm ci --prefix .github/validation --ignore-scripts --no-audit --no-fund
   node .github/validation/validate.mjs
+  node --permission --allow-fs-read=tools/agent-review tools/agent-review/test/policy.test.mjs
   git diff --check
   ```
 

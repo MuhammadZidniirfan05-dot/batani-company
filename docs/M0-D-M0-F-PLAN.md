@@ -1,5 +1,7 @@
 # Rencana penerimaan M0-D dan integrasi M0-F
 
+**Pembaruan setelah snapshot perencanaan — 2026-11-25:** keputusan owner pada PRD §13 v1.5 mengizinkan penyelesaian workflow penuh dengan seluruh peran `gpt-6-astra/high`, masing-masing terpisah. Worker aplikasi nanti memakai `gpt-6.1-sol/medium`. [Issue #4](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/4) menetapkan paket offline F1: evaluator/schema, fixture dan tes; hasilnya simulasi, bukan status GitHub. Target model Worker murah dan larangan memulai seluruh F1–F4 di bawah merupakan snapshot rencana sebelum penugasan baru. App/publisher produksi, isolasi menyeluruh, provenance aktual, invalidasi native dan keputusan closure belum dibuktikan oleh izin atau simulator. Node permission flags hanya pembatas proses tes trusted, bukan sandbox terhadap kode berbahaya atau bukti isolasi agent. Bukti konfigurasi/pengujian operasional tetap wajib; kabari owner sebelum coding aplikasi.
+
 Status: **DRAFT untuk keputusan owner; belum mengizinkan implementasi/integrasi**. Tanggal bukti: 2026-11-25, sekitar 04:10 UTC. Acuan kebutuhan: [PRD](PRD.md) §§9.1–9.5, 11, 13; batas fase §9.6; [AGENTS](../AGENTS.md), [runbook](AGENT-WORKFLOW.md), dan [roadmap](ROADMAP.md). Seluruh ID D-*, F-* dan T-* di sini adalah ID rencana lokal, bukan Issue GitHub.
 
 Planner: agent `/root`, sesi `13eb689f-1308-4139-9958-5fe081dfa273`. Metadata tool tidak mengekspos model/reasoning aktual; jangan menyamakan model target dengan bukti run. Target sesuai PRD §9.1: Planner/Reviewer `gpt-6-astra/high`, Worker `gpt-6.1-sol/medium`, sesi masing-masing terpisah. Tidak dilakukan review independen terhadap pekerjaan sesi ini.
@@ -286,4 +288,3 @@ Prompt siap salin **setelah prasyarat penugasan dipenuhi**:
 Owner perlu memutuskan D-DEC-1/2 dan F-DEC-1/2/3, menyetujui scope implementasi kecil serta penerbitan Issue jika ingin menjalankan Worker, dan menunjuk lingkungan uji yang tidak memberi Worker akses keyring operator. Belum ada penerimaan M0, scope implementasi F1, atau bukti gate native. PHP 8.5.12/Laravel/Filament tetap mengikuti [gate teknologi](PHP-COMPATIBILITY.md), terpisah dari rancangan ini.
 
 Hal yang selesai pada tugas Planner ini: inspeksi baca API, usulan closure, matriks simulasi, desain dan batas keamanan publisher, acceptance criteria serta handoff. Tidak ada uji simulator/integrasi yang dijalankan. Hasil validasi dokumen lokal dicatat dalam laporan penyerahan, bukan disamakan dengan CI remote.
-

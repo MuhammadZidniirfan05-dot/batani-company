@@ -62,7 +62,7 @@ Pemilik Produk + docs/PRD.md
     GitHub Issue yang terukur
              |
              v
-   EXECUTOR (model ekonomis)
+   EXECUTOR (model sesuai tahap)
              |
    Feature branch + Pull Request
              |
@@ -91,7 +91,7 @@ Kembali ke Executor     Merge sesuai proteksi branch
 
 Satu akun GitHub diperbolehkan, tetapi Planner, Executor, dan Reviewer wajib agent/sesi terpisah. CI dan review terbaru yang lulus menjadi syarat kelayakan merge; penolakan harus disertai alasan dan prompt koreksi untuk Executor pada PR yang sama. Approval native dari akun GitHub kedua tidak diwajibkan. Acuan: [PRD](docs/PRD.md) §§9, 11, 13.
 
-Model/peran telah disepakati: Planner dan Reviewer memakai `gpt-6-astra` dengan reasoning `high`, sedangkan Executor/Worker memakai `gpt-6.1-sol` dengan reasoning `medium`, pada agent/sesi terpisah. Pilihan tersebut belum menjadi bukti penerapan setiap run. Integrasi status `Agent review`, isolasi kredensial, dan verifikasi kontrol merge masih pending. Blade yang sudah tercantum pada baseline ditegaskan untuk tampilan publik; implementasinya menunggu workflow berjalan dan penerimaan M0. Acuan: [PRD](docs/PRD.md) §§3, 9.1, 13.
+Model/peran mengikuti tahap: seluruh fondasi workflow memakai `gpt-6-astra/high`, termasuk coding tooling; saat aplikasi dimulai Worker memakai `gpt-6.1-sol/medium`, sedangkan Planner/Reviewer tetap `gpt-6-astra/high`. Setiap peran agent/sesi terpisah. Pilihan tersebut belum menjadi bukti penerapan setiap run. Owner telah mengizinkan penyelesaian workflow lokal dan GitHub yang diperlukan pada PRD §13 v1.5; izin bukan bukti integrasi status `Agent review`, isolasi kredensial atau kontrol merge sudah lulus. Kabari owner sebelum coding aplikasi Laravel/Filament/Blade dimulai. Acuan: [PRD](docs/PRD.md) §§3, 9.1, 13.
 
 ## 5. Milestone awal: M0 — GitHub Workflow Foundation
 
@@ -112,9 +112,9 @@ M0 diprioritaskan sebelum implementasi fitur website. Ruang lingkupnya mencakup:
 1. Gunakan repository resmi **Public** [`MuhammadZidniirfan05-dot/batani-company`](https://github.com/MuhammadZidniirfan05-dot/batani-company), sesuai keputusan owner 24 November 2026 dan penegasan visibilitas Public pada 25 November 2026.
 2. Untuk workspace yang sudah tersedia, buka folder `D:/laragon/www/batani-company` di VS Code tanpa clone ulang.
 3. Baca seluruh [`docs/PRD.md`](docs/PRD.md), [`AGENTS.md`](AGENTS.md), dan [`docs/AGENT-WORKFLOW.md`](docs/AGENT-WORKFLOW.md). Periksa status Git dan perubahan lokal sebelum bekerja; pertahankan pekerjaan yang sudah ada.
-4. Lanjutkan persiapan PR M0 pada branch `chore/m0-workflow-foundation`. Jalankan validasi lokal dan lengkapi bukti serta deskripsi PR, lalu minta izin owner sebelum push.
+4. Gunakan branch dari Issue READY dan baseline yang disepakati. Jalankan validasi lokal, lengkapi bukti serta deskripsi PR, lalu publikasikan dalam scope izin workflow PRD §13 v1.5. PR fondasi tetap menjadi dependensi sampai gate dan penerimaannya lengkap.
 5. Pertahankan Planner, Executor, dan Reviewer pada agent/sesi terpisah. Penerimaan M0 memerlukan pemeriksaan CI dan review sesuai [`docs/PRD.md`](docs/PRD.md) §§9, 11, dan 13, termasuk verifikasi kontrol GitHub yang benar-benar aktif sebelum merge.
-6. Tahap ini tidak mencakup pembuatan repository atau Issue baru, scaffolding aplikasi, deployment, maupun Fase 5.
+6. Issue workflow lanjutan kini diizinkan. Tahap ini tidak mencakup scaffolding aplikasi, deployment, maupun Fase 5; kabari owner saat siap berpindah ke coding aplikasi.
 
 Untuk membuka workspace yang sudah ada:
 
@@ -152,4 +152,4 @@ Jangan jalankan perintah aplikasi Laravel sebelum M0 diterima dan stack dinyatak
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Keputusan arsitektur |
 | [`.github/`](.github/) | Template Issue/PR dan workflow validasi M0 |
 
-**Langkah berikutnya:** selesaikan persiapan publikasi PR M0 pada branch yang sama, jalankan validasi lokal, lalu minta izin owner sebelum push. Verifikasi CI, review terpisah, dan kontrol GitHub sesuai [`docs/PRD.md`](docs/PRD.md) §§9, 11, dan 13 sebelum penerimaan M0; pekerjaan tetap berhenti sebelum Fase 5.
+**Langkah berikutnya:** selesaikan tooling dan integrasi workflow pada Issue yang ditugaskan, verifikasi CI, review terpisah, isolasi dan kontrol GitHub sesuai [`docs/PRD.md`](docs/PRD.md) §§9, 11, dan 13. Izin penuh workflow tidak meluluskan gate secara otomatis; kabari owner sebelum tahap coding aplikasi.
