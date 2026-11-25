@@ -89,11 +89,13 @@ test('F1-05: CI source must match independently supplied policy', () => {
   rejection((request) => { request.ci.appId = 999; }, 'CI_CHANGED');
   rejection((request, context) => { context.sourceTrusted = false; }, 'SOURCE_UNTRUSTED');
 });
-test('F1-06: distinct role identities, known metadata and owner-selected models are required', () => {
-  rejection((request, context) => {
-    context.registry.worker.sessionId = context.registry.planner.sessionId;
-    request.roles.worker.sessionId = request.roles.planner.sessionId;
-  }, 'ROLE_SESSION_COLLISION');
+test('F1-06: independent reviewer, known metadata and owner-selected models are required', () => {
+  for (const name of ['planner', 'worker']) {
+    rejection((request, context) => {
+      context.registry.reviewer.sessionId = context.registry[name].sessionId;
+      request.roles.reviewer.sessionId = request.roles[name].sessionId;
+    }, 'ROLE_SESSION_COLLISION');
+  }
   rejection((request, context) => { context.registry.reviewer.metadataKnown = false; }, 'METADATA_UNKNOWN');
   rejection((request, context) => { context.registry.worker.model = 'unknown'; }, 'ROLE_CONFIGURATION');
   rejection((request, context) => { context.registry.reviewer.reasoning = 'medium'; }, 'ROLE_CONFIGURATION');
@@ -104,6 +106,55 @@ test('F1-06: distinct role identities, known metadata and owner-selected models 
     role.model = 'gpt-6.1-sol'; role.reasoning = 'medium';
   }
   assert.equal(evaluateReview(request, context).decision, 'READY_TO_PUBLISH');
+});
+
+test('F1-27: Planner and Worker may share a chat with separate stage metadata', () => {
+  for (const kind of ['workflow', 'application']) {
+    const data = fixture();
+    const { request, context } = data;
+    request.assignment.kind = context.assignment.kind = kind;
+    for (const roles of [request.roles, context.registry]) {
+      roles.worker.sessionId = roles.planner.sessionId;
+      if (kind === 'application') {
+        roles.worker.model = 'gpt-6.1-sol';
+        roles.worker.reasoning = 'medium';
+      }
+    }
+    const before = structuredClone(data);
+    const output = evaluateReview(request, context);
+    assert.equal(output.decision, 'READY_TO_PUBLISH');
+    assert.equal(output.simulationOnly, true);
+    assert.equal(output.nativeGateVerified, false);
+    assert.deepEqual(data, before);
+  }
+});
+
+test('F1-28: shared chat does not bypass stage evidence, model policy or the registry', () => {
+  for (const scenario of ['run', 'metadata', 'model', 'registry']) {
+    const reasons = {
+      run: 'ROLE_RUN_COLLISION', metadata: 'METADATA_UNKNOWN',
+      model: 'ROLE_CONFIGURATION', registry: 'ROLE_REGISTRY_MISMATCH',
+    };
+    rejection((request, context) => {
+      request.assignment.kind = context.assignment.kind = 'application';
+      for (const roles of [request.roles, context.registry]) {
+        roles.worker.sessionId = roles.planner.sessionId;
+        roles.worker.model = 'gpt-6.1-sol';
+        roles.worker.reasoning = 'medium';
+      }
+      if (scenario === 'run') {
+        context.registry.worker.metadataRef = context.registry.planner.metadataRef;
+        request.roles.worker.metadataRef = request.roles.planner.metadataRef;
+      } else if (scenario === 'metadata') {
+        context.registry.worker.metadataKnown = false;
+      } else if (scenario === 'model') {
+        context.registry.worker.model = 'gpt-6-astra';
+        context.registry.worker.reasoning = 'high';
+      } else {
+        request.roles.worker.metadataRef = 'syn:unregistered-stage';
+      }
+    }, reasons[scenario]);
+  }
 });
 test('F1-07: synthetic provenance is exact; expiration and future issuance fail closed', () => {
   for (const key of Object.keys(fixture().request.provenance)) {

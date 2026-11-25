@@ -89,9 +89,18 @@ Kembali ke Executor     Merge sesuai proteksi branch
 
 > Keterangan: Diagram di atas adalah **workflow target**, bukan klaim bahwa agent GitHub atau deployment otomatis sudah terpasang.
 
-Satu akun GitHub diperbolehkan, tetapi Planner, Executor, dan Reviewer wajib agent/sesi terpisah. CI dan review terbaru yang lulus menjadi syarat kelayakan merge; penolakan harus disertai alasan dan prompt koreksi untuk Executor pada PR yang sama. Approval native dari akun GitHub kedua tidak diwajibkan. Acuan: [PRD](docs/PRD.md) §§9, 11, 13.
+Satu akun GitHub diperbolehkan. Planner dan Worker boleh melanjutkan dalam chat yang sama dengan handoff peran/model; Reviewer memakai chat lain untuk review independen. CI dan review terbaru yang lulus menjadi syarat kelayakan merge; penolakan harus disertai alasan dan prompt koreksi untuk Worker pada PR yang sama. Approval native dari akun GitHub kedua tidak diwajibkan. Acuan: [PRD](docs/PRD.md) §§9, 11, 13 v1.6.
 
-Model/peran mengikuti tahap: seluruh fondasi workflow memakai `gpt-6-astra/high`, termasuk coding tooling; saat aplikasi dimulai Worker memakai `gpt-6.1-sol/medium`, sedangkan Planner/Reviewer tetap `gpt-6-astra/high`. Setiap peran agent/sesi terpisah. Pilihan tersebut belum menjadi bukti penerapan setiap run. Owner telah mengizinkan penyelesaian workflow lokal dan GitHub yang diperlukan pada PRD §13 v1.5; izin bukan bukti integrasi status `Agent review`, isolasi kredensial atau kontrol merge sudah lulus. Kabari owner sebelum coding aplikasi Laravel/Filament/Blade dimulai. Acuan: [PRD](docs/PRD.md) §§3, 9.1, 13.
+Model/peran mengikuti tahap: seluruh fondasi workflow memakai `gpt-6-astra/high`, termasuk coding tooling; saat aplikasi dimulai Worker memakai `gpt-6.1-sol/medium`, sedangkan Planner/Reviewer tetap `gpt-6-astra/high`. Catat model/reasoning aktual per tahap; pilihan target atau teks prompt tidak membuktikan pergantian model. Owner telah mengizinkan penyelesaian workflow lokal dan GitHub pada PRD §13 v1.5; izin bukan bukti gate aktif. Kabari owner sebelum coding aplikasi Laravel/Filament/Blade dimulai.
+
+Alur harian setelah aplikasi diizinkan:
+
+1. **Planner mahal:** susun dan publikasikan Issue terukur; owner/maintainer menetapkan READY sesuai otorisasi.
+2. **Chat yang sama:** Planner menyerahkan URL Issue dan meminta pemilihan Worker `gpt-6.1-sol/medium`. Owner memilihnya melalui pemilih model, lalu mengirim prompt Worker.
+3. **Worker murah:** baca Issue, PRD dan aturan proyek; periksa Git; implementasikan scope, jalankan tes dan ajukan PR beserta bukti.
+4. **Reviewer mahal di chat lain:** periksa Issue, diff, Clean Architecture/Clean Code, tes dan CI. Bila ditolak, kembalikan prompt koreksi ke Worker untuk Issue/PR yang sama.
+
+Prompt siap salin dan pencatatan metadata ada di [runbook](docs/AGENT-WORKFLOW.md#handoff-satu-chat-dan-prompt). Aturan kualitas konkret ada di [arsitektur](docs/ARCHITECTURE.md#clean-architecture-dan-clean-code); nama folder saja tidak membuktikan arsitektur bersih.
 
 ## 5. Milestone awal: M0 — GitHub Workflow Foundation
 
@@ -113,7 +122,7 @@ M0 diprioritaskan sebelum implementasi fitur website. Ruang lingkupnya mencakup:
 2. Untuk workspace yang sudah tersedia, buka folder `D:/laragon/www/batani-company` di VS Code tanpa clone ulang.
 3. Baca seluruh [`docs/PRD.md`](docs/PRD.md), [`AGENTS.md`](AGENTS.md), dan [`docs/AGENT-WORKFLOW.md`](docs/AGENT-WORKFLOW.md). Periksa status Git dan perubahan lokal sebelum bekerja; pertahankan pekerjaan yang sudah ada.
 4. Gunakan branch dari Issue READY dan baseline yang disepakati. Jalankan validasi lokal, lengkapi bukti serta deskripsi PR, lalu publikasikan dalam scope izin workflow PRD §13 v1.5. PR fondasi tetap menjadi dependensi sampai gate dan penerimaannya lengkap.
-5. Pertahankan Planner, Executor, dan Reviewer pada agent/sesi terpisah. Penerimaan M0 memerlukan pemeriksaan CI dan review sesuai [`docs/PRD.md`](docs/PRD.md) §§9, 11, dan 13, termasuk verifikasi kontrol GitHub yang benar-benar aktif sebelum merge.
+5. Catat handoff Planner → Worker dalam chat yang sama dan gunakan chat lain untuk Reviewer. Penerimaan M0 memerlukan pemeriksaan CI dan review sesuai [`docs/PRD.md`](docs/PRD.md) §§9, 11, dan 13, termasuk verifikasi kontrol GitHub yang benar-benar aktif sebelum merge.
 6. Issue workflow lanjutan kini diizinkan. Tahap ini tidak mencakup scaffolding aplikasi, deployment, maupun Fase 5; kabari owner saat siap berpindah ke coding aplikasi.
 
 Untuk membuka workspace yang sudah ada:
@@ -138,6 +147,7 @@ Jangan jalankan perintah aplikasi Laravel sebelum M0 diterima dan stack dinyatak
 - Jangan commit `.env`, password, API token, private key, atau data rahasia.
 - Jangan push langsung ke `main` setelah proteksi branch ditetapkan.
 - Setiap implementasi mengacu ke Issue dan diajukan melalui PR.
+- Terapkan [Clean Architecture dan Clean Code](docs/ARCHITECTURE.md#clean-architecture-dan-clean-code): batas bisnis/UI/I/O jelas, kode fokus dan mudah dibaca, serta tes perilaku dan jalur gagal sesuai risiko.
 - Jangan menganggap komentar `APPROVED` dari AI sebagai pengganti pemeriksaan CI dan persetujuan wajib di GitHub.
 - Jangan deploy ke production tanpa persetujuan pemilik proyek dan mekanisme rollback yang jelas.
 - Laporkan secara terpisah apa yang **sudah diimplementasikan**, **baru direncanakan**, atau **terblokir**.

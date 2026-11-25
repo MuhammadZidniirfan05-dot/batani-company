@@ -1,6 +1,6 @@
 # Kontrak GitHub Issue
 
-Acuan: [PRD](PRD.md) §§9.3, 9.6, 11, 13. Tidak ada GitHub Issue yang dibuat dalam Fase 3–4. Dokumen ini dan tiga form adalah persiapan untuk fase yang disetujui berikutnya.
+Acuan: [PRD](PRD.md) §§8, 9.3, 9.6, 11, 13. Fase 3–4 dahulu hanya menyiapkan dokumen/form; izin penuh workflow pada v1.5 dan handoff v1.6 kini berlaku untuk Issue workflow yang ditugaskan.
 
 ## Isi wajib
 
@@ -16,14 +16,15 @@ Gunakan [feature](../.github/ISSUE_TEMPLATE/feature.yml), [bug](../.github/ISSUE
 - Contoh nanti: "Pengguna publik tidak menemukan draft berita dalam hasil pencarian maupun URL detail" (FR-011, FR-015, PRD §8).
 - Hindari "buat website", "aman", atau "bagus" tanpa batas dan bukti. Feature aplikasi belum boleh READY sebelum gate M0/runtime.
 - Bagi pekerjaan agar satu Issue memiliki hasil dan tanggung jawab yang jelas. Nyatakan batas folder/komponen dan kualitas yang dapat diperiksa: struktur serta penamaan mengikuti proyek, tidak ada duplikasi/dead code/berkas sementara/secret, dan abstraksi atau dependency baru memerlukan alasan. Untuk aplikasi setelah M0 diterima, ikuti konvensi Laravel tanpa membuat scaffolding sekarang. Rencana tes harus sesuai perilaku dan risiko, bukan sekadar menjalankan perintah.
+- Untuk perubahan kode, jelaskan alur input → use case → persistence/layanan luar, tanggung jawab komponen, arah dependensi, dan aturan validasi/otorisasi. AC memeriksa perilaku serta kegagalan penting; rujuk [Clean Architecture dan Clean Code](ARCHITECTURE.md#clean-architecture-dan-clean-code). Jangan mensyaratkan layer/interface baru tanpa kebutuhan. Untuk dokumentasi murni, tulis N/A dengan alasan.
 
 ## READY dan ownership
 
 Planner memeriksa kelengkapan dan ukuran tugas, lalu owner/maintainer yang berwenang menetapkan READY setelah dependensi selesai dan keputusan berisiko disetujui. Cantumkan Executor yang ditugaskan, Reviewer terpisah, dan owner keputusan. Prioritas P0–P3 dan risiko low/medium/high memakai definisi [runbook](AGENT-WORKFLOW.md).
 
-Handoff mencatat agent/sesi Planner, Executor, dan Reviewer yang terpisah, model aktual, serta pilihan sesuai tahap pada PRD §9.1. Seluruh workflow memakai agent mahal; kelas Reviewer lebih tinggi daripada Worker berlaku pada aplikasi. Akun GitHub boleh sama. Acceptance criteria integrasi review harus menguji penolakan pada hasil gagal, hilang, usang, dan tidak tepercaya; komentar APPROVED saja bukan bukti gate aktif. Acuan: PRD §§9.1, 9.3–9.5, 11, 13.
+Planner dan Worker boleh satu chat; Reviewer memakai chat lain. Handoff mencatat setiap peran, ID sesi, run/turn atau waktu, model/reasoning aktual, sumber bukti dan target sesuai tahap pada PRD §9.1. Seluruh workflow memakai agent mahal; Worker murah berlaku pada aplikasi. Akun GitHub boleh sama. Acceptance criteria integrasi review tetap menguji penolakan pada hasil gagal, hilang, usang dan tidak tepercaya; komentar APPROVED bukan bukti gate aktif.
 
-Sebelum masing-masing peran bekerja, catat ID sesi, model dan reasoning aktual bila tersedia; target seluruh peran workflow `gpt-6-astra/high`, sedangkan aplikasi memakai Planner/Reviewer `gpt-6-astra/high` dan Worker `gpt-6.1-sol/medium`. Bila mismatch diketahui, ingatkan owner tentang target, aktual, dan perpindahan sesi/peran yang diperlukan. Bila metadata tidak tersedia, tulis **belum terverifikasi** dan minta pemeriksaan pemilih model. Target pada kontrak Issue tidak membuktikan model run. Reviewer harus memakai sesi lain walaupun modelnya sama dengan Planner; Worker tidak mereview pekerjaannya sendiri.
+Sebelum masing-masing peran bekerja, catat model/reasoning aktual bila tersedia; target seluruh peran workflow `gpt-6-astra/high`, sedangkan aplikasi memakai Planner/Reviewer `gpt-6-astra/high` dan Worker `gpt-6.1-sol/medium`. Setelah Issue READY, Planner meminta owner memilih model Worker sesuai tahap dan melanjutkan chat yang sama dengan [prompt handoff](AGENT-WORKFLOW.md#handoff-satu-chat-dan-prompt). Bila mismatch diketahui, selesaikan sebelum implementasi. Bila metadata tidak tersedia, tulis **belum terverifikasi** dan minta pemeriksaan pemilih model; catat konfirmasi owner terpisah dari metadata runtime. Target/prompt tidak membuktikan model run. Reviewer harus memakai sesi lain walaupun modelnya sama dengan Planner; Worker tidak mereview pekerjaannya sendiri.
 
 Issue yang belum memiliki jawaban untuk dependensi kritis tetap BACKLOG atau BLOCKED, disertai alasan dan pihak pembuka hambatan. Jangan melewati pemeriksaan hanya karena field form terisi. Form mewajibkan input, tetapi tidak membuktikan isinya benar atau memenuhi acceptance criteria.
 

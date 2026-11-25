@@ -6,6 +6,14 @@ menerbitkan status, memverifikasi tanda tangan kriptografis, menjalankan
 deployment, atau mengaktifkan gate native. Semua hasil memuat
 `simulationOnly: true` dan `nativeGateVerified: false`.
 
+Penyelarasan [Issue #6](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/6)
+mengikuti PRD v1.6: Planner dan Worker boleh memiliki `sessionId` sama;
+Reviewer harus berbeda dari keduanya. Setiap peran tetap memiliki `metadataRef`
+berbeda untuk rekaman tahap/run masing-masing, termasuk ketika model workflow
+sama. Metadata/model tiap peran harus cocok dengan registry sintetis dan target
+sesuai tahap. Referensi unik tidak membuktikan pergantian model atau provenance
+nyata; integrasi operator masih harus menyediakan bukti aktual yang tepercaya.
+
 ## Kontrak
 
 `evaluateReview(request, context)` menerima dua argumen terpisah. `context`
@@ -77,6 +85,7 @@ sudah dijalankan atau bahwa GitHub Actions telah lulus.
 | --- | --- |
 | Approval sintetis, CI gagal/hilang/pending | F1-01–F1-03 |
 | Snapshot, scope, sumber CI, sesi/model/provenance, batas lifetime dari policy | F1-04–F1-07, F1-20 |
+| Planner/Worker satu chat, Reviewer terpisah, metadata per tahap dan model tetap wajib | F1-06, F1-27–F1-28 |
 | Replay, penolakan terbaru, CI attempt, status PR | F1-08–F1-10 |
 | Schema, batas input, accessor, teks inert, penolakan real mode | F1-11–F1-12 |
 | Aktor/evidence seluruh edge, correction loop, larangan publisher melakukan merge | F1-13–F1-14, F1-21 |

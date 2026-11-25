@@ -177,7 +177,13 @@ const hold = (reason, replayUpdate) => result(
 );
 function registryProblem(context) {
   const entries = Object.entries(context.registry);
-  if (!unique(entries.map(([, role]) => role.sessionId))) return 'ROLE_SESSION_COLLISION';
+  const { planner, worker, reviewer } = context.registry;
+  // PRD v1.6 permits sequential Planner/Worker stages in one chat, never self-review.
+  if ([planner.sessionId, worker.sessionId].includes(reviewer.sessionId)) {
+    return 'ROLE_SESSION_COLLISION';
+  }
+  // Each stage still needs its own metadata record; a shared chat is not a shared run.
+  if (!unique(entries.map(([, role]) => role.metadataRef))) return 'ROLE_RUN_COLLISION';
   for (const [name, role] of entries) {
     if (!role.metadataKnown) return 'METADATA_UNKNOWN';
     const applicationWorker = context.assignment.kind === 'application' && name === 'worker';
