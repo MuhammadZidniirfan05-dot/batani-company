@@ -33,8 +33,9 @@ test('application CI is allowed only with pinned actions, exact PHP and mandator
   for (const mutate of [
     (value) => { value.permissions.contents = 'write'; },
     (value) => { value.on.pull_request_target = {}; },
-    (value) => { value.jobs.application.steps[1].uses = 'shivammathur/setup-php@v2'; },
-    (value) => { value.jobs.application.steps[1].with['php-version'] = '8.5'; },
+    (value) => { value.jobs.application.steps[0].uses = 'actions/checkout@v4'; },
+    (value) => { value.jobs.application.container.image = 'php:8.5.12-cli-bookworm'; },
+    (value) => { value.jobs.application.container.image = value.jobs.application.container.image.replace('8.5.12', '8.5.13'); },
     (value) => { value.jobs.application.steps = value.jobs.application.steps.filter((step) => step.run !== 'php artisan test'); },
     (value) => { value.jobs.application.steps.find((step) => step.run === 'php artisan test').if = '${{ false }}'; },
     (value) => { value.jobs.application.steps.find((step) => step.run === 'php artisan test').if = false; },

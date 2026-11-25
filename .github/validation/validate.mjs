@@ -105,9 +105,7 @@ export function validateWorkflow(workflow, deployment = false, application = fal
     }
     for (const step of job.steps) {
       if (step.uses) {
-        const actionPattern = application
-          ? /^(actions\/(checkout|setup-node)|shivammathur\/setup-php)@[a-f0-9]{40}$/
-          : /^actions\/(checkout|setup-node)@[a-f0-9]{40}$/;
+        const actionPattern = /^actions\/(checkout|setup-node)@[a-f0-9]{40}$/;
         requireThat(actionPattern.test(step.uses), 'Action harus dikunci SHA 40 karakter dan sesuai allowlist');
         if (step.uses.startsWith('actions/checkout@')) {
           requireThat(step.with?.['persist-credentials'] === false, 'Checkout tidak boleh menyimpan kredensial');
@@ -125,7 +123,8 @@ export function validateWorkflow(workflow, deployment = false, application = fal
     requireThat(steps.some((step) => step.uses?.startsWith('actions/checkout@')), 'Checkout wajib');
     requireThat(steps.some((step) => step.uses?.startsWith('actions/setup-node@') && step.with?.['node-version'] === '24'), 'Node 24 wajib untuk validator');
     if (application) {
-      requireThat(steps.some((step) => step.uses?.startsWith('shivammathur/setup-php@') && step.with?.['php-version'] === '8.5.12'), 'CI aplikasi wajib PHP 8.5.12');
+      const container = workflow.jobs.application.container;
+      requireThat(container && Object.keys(container).length === 1 && /^php:8\.5\.12-cli-bookworm@sha256:[a-f0-9]{64}$/.test(container.image), 'CI aplikasi wajib image PHP 8.5.12 dengan digest tetap');
       const requiredRuns = [
         `php -r "exit(PHP_VERSION === '8.5.12' ? 0 : 1);"`,
         'composer validate --strict\ncomposer install --no-interaction --prefer-dist --no-progress --no-plugins\ncomposer check-platform-reqs\ncomposer audit',

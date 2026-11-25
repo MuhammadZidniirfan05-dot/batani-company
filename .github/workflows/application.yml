@@ -19,22 +19,27 @@ jobs:
     name: Laravel validation
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    container:
+      image: php:8.5.12-cli-bookworm@sha256:050713ce008e2360ea9dc96e1f9a075690132388d917fc3552806f7a7be6f2a0
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - name: Setup PHP target
-        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
-        with:
-          php-version: '8.5.12'
-          extensions: mbstring, dom, fileinfo, intl, pdo_mysql, pdo_sqlite
-          tools: composer:2.10.2
-          coverage: none
+      - name: Prepare extensions and verified Composer
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git unzip libicu-dev libzip-dev
+          docker-php-ext-install -j2 intl pdo_mysql zip
+          curl --fail --silent --show-error --location https://getcomposer.org/download/2.10.2/composer.phar --output /tmp/composer.phar
+          echo '5ee7125f8a30a34d246cefdc0bc85b8a783b28f2aec968994118512350d28027  /tmp/composer.phar' | sha256sum --check
+          install -m 755 /tmp/composer.phar /usr/local/bin/composer
       - name: Verify exact PHP version
         run: |
           php -r "exit(PHP_VERSION === '8.5.12' ? 0 : 1);"
       - name: Validate and install locked dependencies
+        env:
+          COMPOSER_ALLOW_SUPERUSER: '1'
         run: |
           composer validate --strict
           composer install --no-interaction --prefer-dist --no-progress --no-plugins
