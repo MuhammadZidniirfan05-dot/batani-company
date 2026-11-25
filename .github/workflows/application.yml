@@ -21,6 +21,19 @@ jobs:
     timeout-minutes: 10
     container:
       image: php:8.5.12-cli-bookworm@sha256:050713ce008e2360ea9dc96e1f9a075690132388d917fc3552806f7a7be6f2a0
+    services:
+      mysql:
+        image: mysql:8.4.7@sha256:0426ec38c7a10aa45ba383887df7878f74ee70e2fd589c7b69207f3577901903
+        env:
+          MYSQL_ROOT_PASSWORD: CI_ROOT_TEMPORARY_10
+          MYSQL_DATABASE: batani_company_ci_test
+          MYSQL_USER: batani_ci_test
+          MYSQL_PASSWORD: CI_APP_TEMPORARY_10
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -53,6 +66,16 @@ jobs:
         run: vendor/bin/pint --test
       - name: Test application
         run: php artisan test
+      - name: Test isolated MySQL integration
+        env:
+          MYSQL_INTEGRATION_TEST: '1'
+          DB_HOST: mysql
+          DB_PORT: '3306'
+          DB_SOCKET: ''
+          DB_DATABASE: batani_company_ci_test
+          DB_USERNAME: batani_ci_test
+          DB_PASSWORD: CI_APP_TEMPORARY_10
+        run: php vendor/bin/phpunit --configuration phpunit.mysql.xml --fail-on-empty-test-suite --fail-on-skipped
       - name: Setup Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:

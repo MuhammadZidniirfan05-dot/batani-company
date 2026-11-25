@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/Support/bootstrap-mysql.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="MySQL integration">
+            <directory>tests/Integration/MySql</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="APP_DEBUG" value="false" force="true"/>
+        <env name="CACHE_STORE" value="array" force="true"/>
+        <env name="SESSION_DRIVER" value="array" force="true"/>
+        <env name="QUEUE_CONNECTION" value="sync" force="true"/>
+    </php>
+</phpunit>
