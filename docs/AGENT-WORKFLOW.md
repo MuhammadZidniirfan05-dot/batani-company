@@ -1,10 +1,12 @@
 # Runbook GitHub dan alur agent
 
-Acuan: [PRD](PRD.md) §§2, 9, 11–13; [AGENTS](../AGENTS.md). Inspeksi terbaru: 2026-11-25. Repository sudah public; proteksi main belum dikonfigurasi. Keputusan owner memperbolehkan satu akun GitHub dengan agent/sesi Planner, Executor, Reviewer terpisah. Pemilihan model telah disepakati; penerapan dan bukti per run, integrasi status review tepercaya, serta isolasi kredensial masih pending. Draft PR dan CI pada head remote terverifikasi; integrasi agent belum operasional.
+Acuan: [PRD](PRD.md) §§2, 9, 11–13; [AGENTS](../AGENTS.md). Inspeksi terbaru: 2026-11-25. Repository sudah public; proteksi main belum dikonfigurasi. Keputusan terbaru v1.6 memperbolehkan Planner → Worker dalam chat yang sama, dengan Reviewer di chat lain. Pemilihan model telah disepakati; penerapan dan bukti per run, integrasi status review tepercaya, serta isolasi kredensial masih pending. Draft PR dan CI pada head remote terverifikasi; integrasi agent belum operasional.
+
+**Aturan aktif v1.6:** ikuti [handoff satu chat](#handoff-satu-chat-dan-prompt) dan [standar kualitas](ARCHITECTURE.md#clean-architecture-dan-clean-code). Catatan keputusan/bootstrap bertanggal di bawah menyimpan kondisi saat itu; kewajiban lama memisahkan sesi Planner dan Worker telah diganti. Reviewer tetap chat lain, target model tetap sesuai tahap, dan pergantian model dilakukan melalui pemilih model, bukan teks prompt.
 
 ## Keputusan pemisahan agent, 2026-11-25
 
-**Pembaruan berlaku setelah keputusan awal di bawah — PRD §13 v1.5:** seluruh peran workflow, termasuk Worker tooling, memakai target `gpt-6-astra/high`. Pada aplikasi, Worker memakai `gpt-6.1-sol/medium`, Planner/Reviewer tetap `gpt-6-astra/high`. Owner memberi izin penuh penyelesaian workflow lokal/GitHub; larangan publikasi/Issue pada snapshot lama adalah batas tugas saat itu. Sesi tetap terpisah, metadata aktual tetap perlu bukti, dan kontrol merge/isolasi tidak dianggap aktif hanya karena izin diberikan. Coding aplikasi menunggu pemberitahuan kepada owner dan gate M0/runtime. [Issue #4](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/4) menugaskan paket offline pertama; patch Issue #2 sudah dipublikasikan melalui [PR #3](https://github.com/MuhammadZidniirfan05-dot/batani-company/pull/3).
+**Riwayat pembaruan — PRD §13 v1.5:** seluruh peran workflow, termasuk Worker tooling, memakai target `gpt-6-astra/high`. Pada aplikasi, Worker memakai `gpt-6.1-sol/medium`, Planner/Reviewer tetap `gpt-6-astra/high`. Owner memberi izin penuh penyelesaian workflow lokal/GitHub; larangan publikasi/Issue pada snapshot lama adalah batas tugas saat itu. Pada keputusan ini sesi masih diwajibkan terpisah; pengecualian Planner/Worker satu chat ditetapkan kemudian pada v1.6. Metadata aktual tetap perlu bukti, dan kontrol merge/isolasi tidak dianggap aktif hanya karena izin diberikan. Coding aplikasi menunggu pemberitahuan kepada owner dan gate M0/runtime. [Issue #4](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/4) menugaskan paket offline pertama; patch Issue #2 sudah dipublikasikan melalui [PR #3](https://github.com/MuhammadZidniirfan05-dot/batani-company/pull/3).
 
 Owner menetapkan “untuk akun github yang sama itu tidak masalah” dan meminta agent berbeda untuk Planner, Executor, dan Reviewer. Sesuai PRD §§9.1, 13, Reviewer menggunakan tingkat reasoning dan kelas biaya lebih tinggi daripada Executor; ID model target dan dasar perbandingan biaya telah ditetapkan, sedangkan identitas model aktual dan reasoning harus dibuktikan pada setiap run. Akun GitHub kedua bukan lagi blocker proyek. Usulan sebelumnya yang mewajibkan satu approval native non-author telah digantikan keputusan ini dan tidak pernah diaktifkan.
 
@@ -121,17 +123,54 @@ Bukti untuk commit dokumentasi lanjutan dicatat pada deskripsi/checks PR #1 sete
 | Reviewer, model reasoning tinggi | Baca Issue, diff, CI, keamanan dan regresi pada SHA terbaru | APPROVED / CHANGES_REQUESTED / BLOCKED; tidak mengarang bukti |
 | Human Owner | Putuskan perubahan kebutuhan/arsitektur/risiko, akses dan release | Persetujuan tercatat; production approval selalu terpisah |
 
-Planner, Executor, dan Reviewer wajib agent/sesi berbeda. Handoff mencatat ID setiap sesi, ID model aktual dan reasoning jika tersedia, serta pilihan model sesuai tahap pada PRD §9.1. Seluruh peran workflow memakai kelas mahal; perbandingan Reviewer lebih tinggi daripada Worker berlaku pada aplikasi. Review penerimaan memerlukan bukti model, reasoning, dan sesi aktual; jangan membuat bukti model atau biaya palsu.
+Planner dan Executor boleh memakai chat/sesi yang sama secara berurutan; Reviewer memakai chat lain. Handoff mencatat peran, ID sesi, penanda run/turn bila tersedia atau waktu pergantian peran, model/reasoning aktual dan sumber buktinya. Seluruh peran workflow memakai kelas mahal; perbandingan Reviewer lebih tinggi daripada Worker berlaku pada aplikasi. Review penerimaan memerlukan bukti aktual; jangan menyimpulkan model dari nama peran atau target.
 
 Owner/maintainer mengirim paket handoff secara manual sampai integrasi diverifikasi. Paket minimal: URL Issue, referensi PRD, scope, dependencies, AC, branch/base SHA, PR/head SHA jika ada, hasil CI, risiko, dan temuan terdahulu. Planner/Reviewer mahal hanya dipanggil ketika keputusan atau review substantif diperlukan. Setelah rework, kirim delta dan bukti baru untuk menghindari evaluasi berulang tanpa perubahan.
 
 ### Alur kerja manual untuk Issue READY, keputusan owner 2026-11-25
 
-Arahan owner yang dicatat pada [Issue #2](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/2) memperjelas handoff: Planner menyusun Issue kecil dengan AC, dependensi, risiko dan tes menurut [panduan Issue](ISSUE-GUIDELINES.md); owner/maintainer menetapkan READY setelah kontrak dan keputusan yang diperlukan lengkap. Worker pada sesi berbeda membaca Issue, memeriksa branch serta perubahan yang sudah ada, mengerjakan hanya scope, menjalankan pemeriksaan, lalu menyerahkan diff, SHA, hasil dan keterbatasan melalui PR terkait Issue. Pembukaan atau pembaruan PR tetap mengikuti otorisasi penugasan; pekerjaan lokal dapat diserahkan kepada operator tanpa mengklaim PR sudah terbit.
+Arahan owner pada [Issue #2](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/2), diperbarui melalui [Issue #6](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/6), menetapkan: Planner menyusun Issue kecil dengan AC, dependensi, risiko, batas arsitektur dan tes menurut [panduan Issue](ISSUE-GUIDELINES.md); owner/maintainer menetapkan READY setelah kontrak dan keputusan yang diperlukan lengkap. Worker boleh melanjutkan di chat Planner setelah handoff dan pemilihan model sesuai tahap. Worker membaca Issue, memeriksa branch serta perubahan yang sudah ada, mengerjakan hanya scope, menjalankan pemeriksaan, lalu menyerahkan diff, SHA, hasil dan keterbatasan melalui PR terkait Issue. Pembukaan atau pembaruan PR mengikuti otorisasi penugasan; pekerjaan lokal tidak boleh dilaporkan sebagai PR terbit.
 
-Sebelum tiap tahap, catat peran, ID agent/sesi, ID model dan reasoning aktual bila metadata tersedia. Target workflow: seluruh peran `gpt-6-astra/high`. Target aplikasi: Planner/Reviewer `gpt-6-astra/high`, Worker `gpt-6.1-sol/medium`; ketiga peran memakai sesi terpisah. Bila model/reasoning yang diketahui tidak cocok, ingatkan owner dengan target dan aktual serta kebutuhan pindah ke sesi/peran yang sesuai. Bila metadata tidak tersedia, tandai **belum terverifikasi** dan minta pemeriksaan pemilih model, tanpa mengarang identitas dari target. Worker tidak menilai implementasinya sendiri sebagai review independen.
+Sebelum tiap tahap, catat peran, ID agent/sesi, model/reasoning aktual bila tersedia dan sumbernya. Target workflow: seluruh peran `gpt-6-astra/high`. Target aplikasi: Planner/Reviewer `gpt-6-astra/high`, Worker `gpt-6.1-sol/medium`; hanya Reviewer wajib chat lain. Bila model/reasoning diketahui tidak cocok, ingatkan owner dengan target/aktual dan selesaikan pemilihan sebelum pekerjaan peran tersebut. Bila metadata tidak tersedia, tandai **belum terverifikasi** dan minta pemeriksaan pemilih model. Konfirmasi owner adalah bukti konfirmasi pemilih, bukan metadata runtime. Worker tidak menilai implementasinya sendiri sebagai review independen.
 
 Reviewer terpisah memeriksa Issue, diff, AC, keamanan, kerapian dan CI aktual untuk head/base yang berlaku, kemudian memberi `APPROVED`, `CHANGES_REQUESTED`, atau `BLOCKED` menurut [checklist review](REVIEW-CHECKLIST.md). Penolakan menyertakan severity, lokasi, alasan, koreksi, cara verifikasi dan prompt siap salin. Worker memperbaiki branch dan PR yang sama, menjalankan ulang pemeriksaan terdampak, lalu menyerahkan SHA dan bukti baru untuk review ulang. Semua perpindahan status dan handoff ini manual; board Projects hanya mencatat status. Komentar `APPROVED` tidak menerbitkan status `Agent review` dan tidak memberi izin merge. Publisher, isolasi izin, proteksi, serta pembuktian invalidasi head/base yang berubah masih pending.
+
+### Handoff satu chat dan prompt
+
+1. Planner mahal membaca kebutuhan dan repository, lalu membuat Issue dengan AC, scope, batas arsitektur serta tes. Setelah READY dalam otorisasi owner/maintainer, serahkan URL Issue, branch/base, risiko dan prompt Worker.
+2. Untuk aplikasi, Planner meminta: **“Pilih gpt-6.1-sol / medium pada chat ini, lalu kirim prompt Worker di bawah.”** Untuk fondasi workflow, Worker tetap `gpt-6-astra/high`. Permintaan itu adalah handoff manual; jangan mengaku sudah mengganti model. Pemilih model/effort merupakan kontrol client; lihat [panduan model resmi](https://learn.chatgpt.com/docs/models?surface=web).
+3. Worker membaca ulang sumber dan Git aktual, mengimplementasikan Issue, menguji dan menyerahkan PR/SHA/bukti. Simpan catatan peran terpisah meskipun ID chat sama: `peran | ID sesi | run/turn atau waktu | target | model/reasoning aktual | sumber bukti`.
+4. Owner membuka chat lain dengan Reviewer `gpt-6-astra/high`, membawa paket review. Reviewer tidak pernah mengimplementasikan patch yang dinilainya. Koreksi kembali ke Worker pada Issue/branch/PR yang sama; review ulang menggunakan head/base terbaru.
+
+Prompt Worker setelah memilih model sesuai tahap:
+
+```text
+Berperan sebagai Worker untuk Issue <URL Issue READY>, tahap <workflow/aplikasi>.
+Baseline <SHA>; branch <branch>; PR yang sama bila sudah ada <URL/N/A>.
+Baca Issue beserta AC, PRD, README, AGENTS, ARCHITECTURE dan aturan direktori.
+Periksa status/diff Git dan pertahankan pekerjaan yang sudah ada.
+Catat peran, ID sesi, run/turn atau waktu, model/reasoning aktual dan sumbernya;
+jangan menganggap prompt telah mengganti model. Bila metadata tidak tersedia,
+tulis belum terverifikasi; bila target/aktual berbeda, selesaikan sebelum coding.
+Kerjakan scope Issue dengan Clean Architecture dan Clean Code yang pragmatis.
+Uji perilaku dan jalur gagal yang relevan, catat perintah/hasil/keterbatasan.
+Serahkan diff, head/base, pemetaan AC, tes lokal dan CI aktual melalui PR.
+Siapkan handoff Reviewer di chat lain; jangan self-approve, merge atau deploy.
+```
+
+Prompt Reviewer pada chat lain:
+
+```text
+Berperan sebagai Reviewer independen. Issue <URL>; PR <URL>; head <SHA>; base <SHA>.
+Sesi Planner/Worker <ID>; Anda harus memakai chat lain dan bukan pembuat patch.
+Baca Issue, PRD, AGENTS, ARCHITECTURE, REVIEW-CHECKLIST dan diff Git aktual.
+Catat ID sesi/model/reasoning aktual beserta sumbernya; target Astra/high bukan bukti.
+Periksa semua AC, batas bisnis/UI/I/O, clean code, keamanan, tes dan CI SHA terbaru.
+Jangan mengedit implementasi. Berikan APPROVED / CHANGES_REQUESTED / BLOCKED
+sesuai checklist, dengan batas bukti. Jika ditolak, sertakan severity, lokasi,
+alasan, koreksi, verifikasi dan prompt Worker untuk Issue/PR yang sama.
+Laporan ini tidak menerbitkan Agent review atau memberi izin merge/deploy.
+```
 
 ## Status dan transisi
 
@@ -196,7 +235,7 @@ Tidak dibuat workflow yang selalu hijau atau status fiktif untuk memenuhi nama c
 
 Branch protection pada repository private memerlukan plan yang mendukung. Jika kontrol tidak tersedia, jangan mengklaim PR aman untuk merge menurut PRD §11; catat BLOCKED dan minta keputusan owner tentang plan atau mekanisme setara. Panduan: [protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
 
-Langkah berikut sesuai PRD §§9.1, 9.5, 11 adalah menerapkan pilihan model/peran pada sesi terpisah dan mencatat bukti setiap run, menyiapkan publisher dan isolasi izin, memverifikasi gate, lalu mengaktifkan aturan dengan izin owner. Undangan akun GitHub kedua tidak lagi diwajibkan. HTTP 403 pada 2026-11-24 adalah bukti historis; setelah owner mengubah visibility menjadi public, proteksi masih belum dikonfigurasi. Tidak ada pengaturan GitHub yang diubah dalam penyelarasan kebijakan ini.
+Langkah berikut sesuai PRD §§9.1, 9.5, 11 adalah menjalankan handoff Planner/Worker dengan catatan per tahap dan Reviewer di chat lain, menyiapkan publisher dan isolasi izin, memverifikasi gate, lalu mengaktifkan aturan dalam otorisasi workflow owner. Undangan akun GitHub kedua tidak lagi diwajibkan. HTTP 403 pada 2026-11-24 adalah bukti historis; setelah owner mengubah visibility menjadi public, proteksi masih belum dikonfigurasi. Penyelarasan kebijakan tidak menjadi bukti kontrol aktif.
 
 ### Label dan Projects
 

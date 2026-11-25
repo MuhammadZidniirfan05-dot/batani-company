@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url';
 import { parseDocument } from 'yaml';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-// PRD v1.5, §13: keputusan owner tentang model dua tahap dan izin penyelesaian workflow.
-const expectedPrdHash = '475cc7139b6bae90fd1fe03465063ad9b7eae2284d1681192798490d5f50410e';
+// PRD v1.6, §13: keputusan owner tentang handoff satu chat dan standar kualitas.
+const expectedPrdHash = '97be0cd26d4c85b8ea955ee6fe8fdaf8cd69a4c50d745f7eaaab1a6af5f1b668';
 const documents = [
   'AGENTS.md', 'docs/ARCHITECTURE.md', 'docs/AGENT-WORKFLOW.md',
   'docs/ROADMAP.md', 'docs/ISSUE-GUIDELINES.md', 'docs/REVIEW-CHECKLIST.md',

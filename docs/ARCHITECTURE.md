@@ -23,7 +23,7 @@ Planner -> Issue READY -> Executor / feature branch -> Pull Request
 
 Bagian setelah review adalah target fase berikutnya, bukan otomasi yang telah terpasang. Saat ini hanya dokumentasi, template, dan validator lokal/konfigurasi CI yang disiapkan. Agent tidak dipanggil oleh workflow. Detail: [runbook](AGENT-WORKFLOW.md).
 
-Batas kepercayaan workflow memisahkan agent/sesi Planner, Executor, Reviewer, dan publisher hasil review. Identitas GitHub boleh sama, tetapi kredensial publisher/admin tidak dibagikan ke lingkungan Executor. Publisher memverifikasi hasil Reviewer dan CI terhadap repository/PR/head/base sebelum menerbitkan status `Agent review`. Native approval dari akun kedua tidak diwajibkan. Pilihan model telah disepakati: Planner/Reviewer `gpt-6-astra` / `high` dan Executor/Worker `gpt-6.1-sol` / `medium`, pada agent/sesi terpisah. Integrasi, isolasi izin, bukti penerapan aktual, serta pengujian penolakan belum diimplementasikan. Acuan: PRD §§9.1, 9.5, 11, 13.
+Batas kepercayaan workflow memisahkan sesi Reviewer dan publisher dari sesi implementasi. Planner dan Worker boleh berbagi chat secara berurutan dengan handoff peran/model tercatat (PRD v1.6). Identitas GitHub boleh sama, tetapi kredensial publisher/admin tidak dibagikan ke lingkungan Executor. Publisher memverifikasi hasil Reviewer dan CI terhadap repository/PR/head/base sebelum menerbitkan status `Agent review`. Native approval dari akun kedua tidak diwajibkan. Target seluruh peran workflow `gpt-6-astra/high`; pada aplikasi Planner/Reviewer tetap `gpt-6-astra/high`, Worker `gpt-6.1-sol/medium`. Simulator offline menguji sebagian kebijakan secara sintetis; integrasi native, isolasi izin dan bukti penerapan aktual masih pending. Acuan: PRD §§9.1, 9.5, 11, 13.
 
 ## Rancangan aplikasi setelah gate
 
@@ -41,6 +41,26 @@ Tampilan publik menggunakan Laravel Blade yang sudah ada pada baseline dan diteg
 | Operasi | Log, backup, restore/rollback, staging, dan gate manusia | §8, §11 |
 
 Laravel policies/permissions wajib memeriksa akses di server, bukan sekadar menyembunyikan tombol. Semua jalur publik, pencarian, sitemap, dan unduhan harus menghormati status publikasi dan privasi. Pilihan antrean, email, search engine, storage provider, paket role/audit, dan scheduler belum diputuskan. Tidak ada kebutuhan yang mengharuskan layanan pencarian berbayar dalam M0.
+
+## Clean Architecture dan Clean Code
+
+Aturan ini berlaku untuk perubahan kode sesuai scope Issue, termasuk tooling sekarang dan aplikasi setelah diizinkan. Gunakan struktur Laravel yang tersedia; tidak ada kewajiban membuat semua lapisan atau folder di awal.
+
+| Batas | Tanggung jawab dan pemeriksaan review |
+|---|---|
+| Input/presentasi | Controller, Filament Resource dan Blade menangani input, memanggil use case dan menyajikan hasil. Tidak menyimpan aturan bisnis yang diduplikasi, query database di Blade, atau orkestrasi email/storage di tampilan. |
+| Use case | Action/service yang terfokus mengoordinasikan satu alur bisnis, termasuk batas transaksi bila relevan. Tidak bergantung pada controller, Blade atau Filament Resource. Aturan bisnis murni dapat diuji tanpa HTTP/UI. |
+| Data dan layanan luar | Eloquent menangani persistence, relasi dan query/scopes; email/storage/API adalah efek samping yang eksplisit. Pakai adapter/interface sempit jika ada batas eksternal atau kebutuhan substitusi/pengujian yang nyata. Eloquent boleh dipakai langsung oleh use case sederhana; tidak wajib membuat repository untuk setiap tabel. |
+| Validasi dan izin | Validasi input pada boundary, gunakan Form Request atau fasilitas Filament yang sesuai dan aturan bersama bila perlu. Otorisasi server melalui policy/permission; invariant bisnis tetap berlaku dari setiap jalur pemanggilan. |
+| Kegagalan | Tentukan hasil saat validasi, akses, database atau layanan luar gagal. Jangan menelan error; gunakan transaksi dan retry hanya bila sesuai kebutuhan. Log cukup untuk diagnosis tanpa secret/data sensitif. |
+
+Arah dependensi: input/UI → use case → aturan bisnis; detail I/O disambungkan pada batas yang membutuhkannya. Modul bisnis tidak mengimpor modul presentasi. Dependency injection digunakan bila membantu batas dan pengujian; hindari service locator/global state tersembunyi di logika bisnis. Jangan membuat microservice, event bus, generic repository, DTO atau interface kosong hanya untuk menyebut arsitektur bersih.
+
+Clean Code diperiksa melalui hal konkret: nama memakai istilah domain yang konsisten; fungsi dan kelas mempunyai tujuan yang jelas; alur kontrol mudah dibaca; tidak ada duplikasi aturan, dead code atau god class; dependensi/efek samping terlihat; konstanta dan tipe dipakai saat memperjelas kontrak. Komentar menjelaskan alasan atau batas penting. Ikuti formatter/linter yang tersedia, tanpa batas panjang fungsi yang arbitrer atau refactor di luar Issue.
+
+Planner mencantumkan alur input → use case → data/layanan luar, tanggung jawab komponen, AC dan risiko. Worker menjelaskan penempatan kode dan alasan abstraksi/dependency baru pada PR. Reviewer memeriksa perilaku, arah dependensi dan kualitas dari diff aktual, bukan hanya nama folder. Dokumentasi murni memakai N/A beralasan untuk dampak arsitektur kode.
+
+Tes unit memeriksa aturan bisnis yang terisolasi; tes feature/integrasi memeriksa wiring, otorisasi, persistence dan efek samping yang relevan. Cakup jalur berhasil serta kegagalan penting seperti draft/private leakage dan kegagalan email setelah inquiry tersimpan. Mock layanan luar bila tepat; jangan mengganti semua logika internal dengan mock atau membuat tes yang hanya menyalin implementasi. Pada M0 jalankan hanya tes tooling yang tersedia; contoh aplikasi ini adalah aturan untuk tahap berikutnya.
 
 ## Keputusan produk yang tetap
 

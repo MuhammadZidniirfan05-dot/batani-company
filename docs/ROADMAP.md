@@ -2,6 +2,8 @@
 
 Acuan: [PRD](PRD.md) §§9.6, 10–13. Ini rencana dependensi, bukan janji tanggal atau bukti milestone selesai.
 
+**Aturan terbaru v1.6 — 2026-11-25:** [Issue #6](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/6) menyelaraskan Planner → Worker dalam chat yang sama dengan pemilihan model dan catatan per tahap; Reviewer mahal memakai chat lain. Untuk aplikasi nanti: Planner mahal membuat Issue, Worker murah membaca/mengerjakan/mengetes, Reviewer mahal menilai dan mengirim koreksi pada PR yang sama. Fondasi workflow tetap seluruhnya target mahal. [Clean Architecture dan Clean Code](ARCHITECTURE.md#clean-architecture-dan-clean-code) wajib masuk Issue dan review. Catatan sesi terpisah pada snapshot lama di bawah berlaku saat itu; handoff aktif mengikuti [runbook](AGENT-WORKFLOW.md#handoff-satu-chat-dan-prompt). Ini belum penerimaan M0 atau izin coding aplikasi.
+
 **Pembaruan penugasan 2026-11-25:** PRD v1.5 menetapkan seluruh pekerjaan workflow memakai `gpt-6-astra/high` pada peran terpisah, serta izin penyelesaian workflow lokal/GitHub. Model Worker murah pada catatan rencana lama di bawah telah diganti untuk tahap workflow; tetap berlaku untuk aplikasi nanti. [Issue #4](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/4) menugaskan evaluator offline dan penyelarasan kebijakan. Izin/persiapan kode belum menjadi bukti gate, isolasi atau M0 diterima. Coding aplikasi belum dimulai dan owner akan dikabari sebelum tahap itu.
 
 ## Milestone

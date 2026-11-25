@@ -4,7 +4,7 @@
 | Metadata | Value |
 |---|---|
 | Document ID | PRD-CP-001 |
-| Version | 1.5 |
+| Version | 1.6 |
 | Date | 2026-11-25 |
 | Status | Approved requirements baseline for planning; implementation not started |
 | Project | Company Profile CMS |
@@ -130,7 +130,7 @@ The exact schema, indexes, constraints and whether publications/studies share on
 - Automated test strategy covering authorization, publication status, search, contact form, and CMS CRUD.
 - Logging, backups, and tested rollback for production operation.
 - SEO-friendly URLs and content metadata.
-- Maintainable Laravel architecture and documented setup commands.
+- Maintainable Laravel architecture and documented setup commands. Apply pragmatic Clean Architecture and Clean Code: separate business use cases from delivery/UI and external I/O, keep responsibilities cohesive and dependencies explicit, use consistent names, and test observable behavior and relevant failure paths. Follow existing Laravel conventions; add layers, interfaces or dependencies only for a concrete need. Reviewable rules are in [ARCHITECTURE](ARCHITECTURE.md).
 
 ## 9. Multi-agent GitHub development workflow — PRIMARY FIRST MILESTONE
 ### 9.1 Roles
@@ -142,13 +142,13 @@ The exact schema, indexes, constraints and whether publications/studies share on
 
 **Human owner**: approves architecture changes, high-risk changes and release to production. AI review is not equivalent to GitHub branch protection or required human approval.
 
-Planner, Executor, dan Reviewer wajib menggunakan agent/sesi terpisah. Satu akun GitHub boleh digunakan untuk proses proyek; identitas akun GitHub tidak membuktikan pemisahan agent. Review terhadap implementasi sendiri tidak memenuhi gate.
+Planner dan Executor boleh memakai chat/sesi yang sama secara berurutan, dengan handoff peran dan pemilihan model yang eksplisit (keputusan owner v1.6). Reviewer tetap memakai chat/sesi terpisah dari Planner/Executor sebagai default review independen. Satu akun GitHub boleh digunakan; akun atau pergantian nama peran tidak membuktikan model aktual maupun independensi review. Review terhadap implementasi sendiri tidak memenuhi gate.
 
-Catat ID agent/sesi untuk setiap peran, ID model yang benar-benar digunakan, serta pengaturan reasoning jika tersedia. Keputusan owner lanjutan 2026-11-25 menetapkan seluruh pekerjaan fondasi workflow, termasuk implementasi tooling, memakai agent mahal. Planner, Executor/Worker, dan Reviewer tetap agent/sesi terpisah. Perbedaan kelas biaya Reviewer terhadap Worker berlaku saat implementasi aplikasi; seluruh peran workflow memakai kelas dan reasoning yang sama. Penetapan ini merupakan konfigurasi target, bukan bukti model aktual setiap run; identitas model, reasoning, dan pemisahan sesi tetap harus dicatat dan diverifikasi pada handoff serta review penerimaan.
+Catat peran, ID agent/sesi, penanda run/turn bila tersedia atau waktu handoff, model/reasoning aktual dan sumber buktinya untuk setiap tahap. Satu ID sesi Planner/Worker tidak boleh dipakai sebagai bukti bahwa modelnya sama atau sudah berganti. Setelah Issue READY, Planner menyerahkan URL Issue dan meminta owner memilih model Worker melalui pemilih model sebelum tahap implementasi; prompt saja tidak melakukan pergantian model. Jika metadata tidak tersedia, tulis **belum terverifikasi** dan minta pemeriksaan pemilih model; konfirmasi owner dicatat sebagai konfirmasi, bukan metadata runtime. Jika nilai aktual diketahui berbeda, selesaikan ketidakcocokan sebelum pekerjaan peran tersebut. Seluruh pekerjaan fondasi workflow, termasuk tooling, tetap memakai agent mahal sesuai v1.5; pola Worker murah berlaku setelah aplikasi diizinkan. Perbedaan kelas biaya Reviewer terhadap Worker berlaku pada aplikasi. Target berikut bukan bukti penerapan setiap run.
 
 | Tahap / peran | Model yang disepakati | Reasoning |
 |---|---|---|
-| Fondasi workflow — Planner, Worker, Reviewer terpisah | `gpt-6-astra` | `high` |
+| Fondasi workflow — Planner/Worker boleh satu chat; Reviewer chat lain | `gpt-6-astra` | `high` |
 | Aplikasi — Planner | `gpt-6-astra` | `high` |
 | Aplikasi — Executor/Worker | `gpt-6.1-sol` | `medium` |
 | Aplikasi — Reviewer | `gpt-6-astra` | `high` |
@@ -161,6 +161,8 @@ From review: `CHANGES_REQUESTED → IN_PROGRESS → IN_REVIEW`, or `APPROVED →
 
 ### 9.3 Issue contract
 Each Issue must specify: title, user/business value, technical objectives, scope and out-of-scope, dependencies, suggested components/files, acceptance criteria, tests, security risks, priority, risk level, agent ownership, Definition of Done. No vague issue such as “build the website”.
+
+For code changes, describe the input → business use case → persistence/external output flow, component responsibilities and boundaries, and behavior/failure tests. State N/A with a reason for documentation-only work. Clean Architecture and Clean Code checks belong in the Issue and PR review, not a separate unscoped refactoring task.
 
 ### 9.4 Pull Request contract
 Every PR links an Issue and contains implementation summary, changed files, tests with actual outputs, data migration implications, security considerations, limitations and reviewer checklist. Reviewer rejection must include severity, file/location, defect reason, exact fix and verification instructions. Rework the **same PR**, avoiding duplicate tasks.
@@ -228,5 +230,9 @@ Keputusan ini menggantikan usulan sebelumnya yang mewajibkan satu approval nativ
 **2026-11-25 — Seluruh workflow memakai agent mahal dan izin penyelesaian workflow (v1.5).** Dalam sesi owner `1d69e31e-81e6-40ea-b2b3-739af91efe8c`, owner menyatakan: “oke untuk workflow dikerjakan semua oleh agent mahal nanti kalau udah mulai coding serahkan ke agent murah untuk pekerja dan planer pake agent mahal”. Seluruh peran fondasi workflow, termasuk coding tooling, memakai target `gpt-6-astra/high`. Setelah aplikasi diizinkan dimulai, Worker memakai `gpt-6.1-sol/medium`, dengan Planner dan Reviewer `gpt-6-astra/high` pada agent/sesi terpisah. Catatan v1.3/v1.4 di atas dipertahankan sebagai riwayat; pilihan dua tahap ini menggantikan Worker murah untuk pekerjaan workflow.
 
 Owner kemudian menyatakan: “oke lanjutkan sampai selesai,untuk workflonya saya izinkah penuh untuk workflownya berikan hasil terbaik,seperti yang saya inginkan nanti kalau udah sampe tahap coding kabari saya”. Penugasan ini mengizinkan pekerjaan lokal, Issue/PR, publikasi dan konfigurasi GitHub yang diperlukan untuk menyelesaikan workflow repository resmi. Tidak perlu meminta ulang izin untuk tindakan workflow yang sudah tercakup; perubahan harus tetap konkret, terukur, diuji, dan tidak menghilangkan pekerjaan lama. Izin bukan bukti penerimaan M0 atau gate operasional. Persyaratan pemisahan akses, keaslian review, CI terbaru dan penolakan hasil usang tetap berlaku; jangan melewatinya untuk menyebut workflow selesai. Aplikasi Laravel/Filament/Blade, deployment dan Fase 5 belum dimulai: kabari owner saat workflow siap untuk tahap coding aplikasi. Keputusan ini dicatat dalam penugasan lanjutan [Issue #4](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/4), terpisah dari patch dokumentasi Issue #2.
+
+**2026-11-25 — Handoff satu chat dan standar kualitas (v1.6).** Dalam sesi owner `1d69e31e-81e6-40ea-b2b3-739af91efe8c`, owner menyatakan: “ah seperitnya aman itu yang pentinf pola developnya pake agent mahal untuk plan lalu dichat yang sama meminta pindah agent murah lalu meminta untuk membac adan mngerjakan github isue yang dikerjakan oleh agent maha tadi,lalu agent mahal review hasil kode dari agent murah.  tolong terapkan juga aturan clean arsitektur dan clean code”. Keputusan ini mengizinkan Planner → Worker dalam chat yang sama, dengan Issue nyata sebagai kontrak dan handoff peran/model yang tercatat. Ini menggantikan kewajiban sesi Planner dan Worker berbeda pada v1.3–v1.5. Reviewer mahal tetap menggunakan chat lain sebagai default independen dari sesi implementasi; owner belum meminta penggabungan sesi Reviewer.
+
+Standar Clean Architecture dan Clean Code menjadi kewajiban perencanaan, implementasi dan review sesuai §8 serta [ARCHITECTURE](ARCHITECTURE.md). Penerapan tercatat pada [Issue #6](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/6). Pekerjaan fondasi workflow saat ini tetap seluruhnya memakai target mahal sesuai v1.5; saat aplikasi diizinkan, Planner/Reviewer `gpt-6-astra/high` dan Worker `gpt-6.1-sol/medium`. Pernyataan ini tidak membuktikan model telah berganti, tidak menerima gate M0/runtime, serta tidak mengizinkan self-review, merge, deployment atau Fase 5. Bukti historis dipertahankan; aturan aktif pada §§8–9 mengikuti keputusan terbaru ini.
 
 Planner may elaborate architecture and issue detail but may not silently alter these decisions. Proposed deviations must be recorded as a decision request and approved by the owner. Issues and PRs must reference this PRD and relevant section IDs.

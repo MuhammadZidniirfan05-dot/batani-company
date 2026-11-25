@@ -2,7 +2,7 @@
 
 Acuan: [PRD](PRD.md) §§9.1, 9.4–9.5, 11, 13. Reviewer memeriksa Issue, PR, diff aktual, dan hasil pemeriksaan untuk commit terbaru. Review ini adalah peran terpisah dari Executor; review mandiri tidak boleh disebut approval independen.
 
-Planner, Executor, dan Reviewer wajib agent/sesi berbeda; satu akun GitHub diperbolehkan. Catat identitas sesi/model aktual serta reasoning bila tersedia. Pilihan owner terbaru: seluruh peran workflow `gpt-6-astra/high`; pada aplikasi Planner/Reviewer `gpt-6-astra/high` dan Worker `gpt-6.1-sol/medium` (PRD §§9.1, 13 v1.5). Bila bukti aktual belum tersedia atau tidak sesuai, nyatakan keterbatasannya sebelum review penerimaan. Laporan agent bukan approval native GitHub atau bukti status `Agent review` sudah aktif.
+Planner dan Worker boleh memakai chat/sesi yang sama secara berurutan; Reviewer memakai chat lain dari Planner/Worker (PRD v1.6). Satu akun GitHub diperbolehkan. Catat peran, ID sesi, run/turn atau waktu, model/reasoning aktual dan sumber buktinya. Target seluruh peran workflow `gpt-6-astra/high`; pada aplikasi Planner/Reviewer `gpt-6-astra/high`, Worker `gpt-6.1-sol/medium`. Bukti aktual yang belum tersedia/tidak sesuai harus dinyatakan sebelum review penerimaan. Laporan agent bukan approval native GitHub atau bukti status `Agent review` aktif.
 
 Sebelum menjalankan peran Reviewer, sebutkan ID sesi, model/reasoning aktual jika tersedia dan bandingkan dengan target. Bila berbeda, ingatkan owner dengan expected/actual dan perpindahan peran/sesi yang diperlukan. Bila metadata tidak tersedia, tulis **belum terverifikasi** dan minta pemeriksaan pemilih model; nama model pada instruksi tidak membuktikan run aktual. Reviewer tidak boleh menjadi sesi Worker yang membuat patch.
 
@@ -20,8 +20,10 @@ Handoff manual sebelum review: Planner menyusun Issue terukur, owner/maintainer 
 
 - [ ] Scope dan referensi PRD tepat; tidak ada perubahan requirement diam-diam.
 - [ ] Struktur mengikuti repository/framework; tanggung jawab tiap modul jelas; nama konsisten; tidak ada duplikasi, dead code, berkas sementara atau abstraksi/dependency tanpa kebutuhan dalam scope.
+- [ ] [Clean Architecture](ARCHITECTURE.md#clean-architecture-dan-clean-code): batas UI/use case/I/O dan arah dependensi jelas; aturan bisnis tidak diduplikasi di controller/Filament/Blade; otorisasi/invariant berlaku di server; abstraksi baru punya alasan. N/A beralasan untuk dokumentasi murni.
+- [ ] Clean Code: fungsi/kelas fokus, alur dan nama mudah dipahami, dependensi/efek samping eksplisit, kegagalan ditangani, tanpa god class atau refactor di luar scope. Tes perilaku mencakup kegagalan relevan dan wiring penting; nama folder atau jumlah layer bukan bukti kualitas.
 - [ ] Correctness diperiksa terhadap AC dan jalur gagal yang relevan; format mengikuti tooling yang ada dan tes memeriksa perilaku sesuai risiko.
-- [ ] Bukti sesi/model/reasoning sesuai pilihan owner pada PRD §9.1, dengan setiap peran pada agent/sesi terpisah; konfigurasi target saja tidak memenuhi bukti review penerimaan.
+- [ ] Bukti per tahap sesuai PRD §9.1: Planner/Worker boleh satu sesi dengan handoff tercatat; Reviewer chat lain. Model/reasoning aktual diperiksa; target, prompt dan konfirmasi owner tentang pemilih model dibedakan dari metadata runtime.
 - [ ] Issue nyata tersedia, atau otorisasi bootstrap Fase 3–4 / integrasi Fase 4.5 dicatat tanpa nomor palsu; persetujuan push diperiksa terpisah.
 - [ ] Acceptance criteria dipetakan ke bukti pada SHA terbaru.
 - [ ] Tes yang diklaim benar-benar berjalan; Laravel/frontend tidak diklaim berjalan dalam M0.
@@ -41,9 +43,9 @@ Issue / otorisasi bootstrap:
 PR / branch:
 Reviewed commit SHA:
 Base SHA:
-Planner — ID agent/sesi/model:
-Executor — ID agent/sesi/model:
-Reviewer — ID agent/sesi/model/reasoning:
+Planner — ID sesi, run/turn atau waktu, model/reasoning aktual, sumber bukti:
+Executor — ID sesi, run/turn atau waktu, model/reasoning aktual, sumber bukti:
+Reviewer — ID sesi berbeda, run/turn atau waktu, model/reasoning aktual, sumber bukti:
 Dasar pemilihan tingkat reasoning dan kelas biaya Reviewer:
 Referensi PRD:
 Bukti yang diperiksa (perintah, exit code, URL run bila ada):

@@ -14,6 +14,8 @@ Masalah, hasil perubahan, dan scope yang diselesaikan:
 
 Daftar berkas dan tujuan perubahan:
 
+Alur input → use case → persistence/layanan luar; tanggung jawab dan batas komponen yang berubah; alasan abstraksi/dependency baru (N/A beralasan untuk dokumentasi murni). Acuan: [Clean Architecture dan Clean Code](../docs/ARCHITECTURE.md#clean-architecture-dan-clean-code).
+
 ## Acceptance criteria dan bukti
 
 | Kriteria dari Issue | Bukti pada commit terbaru | Status |
@@ -52,9 +54,9 @@ ID temuan → perbaikan → SHA → verifikasi. Gunakan PR yang sama untuk rewor
 
 Handoff dan hasil review agent:
 
-- Planner — ID agent/sesi, model:
-- Executor — ID agent/sesi, model:
-- Reviewer — ID agent/sesi, model/reasoning: pending bila belum ditugaskan.
+- Planner — ID sesi, run/turn atau waktu, model/reasoning aktual, sumber bukti:
+- Executor — ID sesi, run/turn atau waktu, model/reasoning aktual, sumber bukti:
+- Reviewer — ID sesi berbeda, run/turn atau waktu, model/reasoning aktual, sumber bukti: pending bila belum ditugaskan.
 - Dasar pemilihan tingkat reasoning dan kelas biaya Reviewer:
 - Head/base SHA yang direview:
 - Bukti CI untuk head tersebut:
@@ -62,12 +64,13 @@ Handoff dan hasil review agent:
 - Bukti status `Agent review`: belum diterbitkan atau tautan aktual.
 - Prompt koreksi Executor bila CHANGES_REQUESTED:
 
-Satu akun GitHub diperbolehkan; agent/sesi tiap peran tetap wajib berbeda. Jangan mengisi bukti yang belum ada. Laporan agent bukan approval native GitHub. Koreksi dan review ulang dilakukan pada PR ini; perubahan head/base memerlukan hasil terbaru. Acuan: PRD §§9.4, 9.5, 11, 13.
+Satu akun GitHub diperbolehkan. Planner/Worker boleh satu chat dengan handoff peran/model; Reviewer memakai chat lain. Prompt/target bukan bukti model telah berganti; tulis belum terverifikasi bila metadata tidak tersedia, dan pisahkan konfirmasi owner dari metadata runtime. Laporan agent bukan approval native GitHub. Koreksi dan review ulang dilakukan pada PR ini; perubahan head/base memerlukan hasil terbaru. Acuan: PRD §§9.1, 9.4, 9.5, 11, 13 v1.6.
 
 - [ ] Referensi PRD dan scope sesuai Issue/otorisasi bootstrap.
 - [ ] Acceptance criteria dipetakan ke bukti aktual pada SHA terbaru.
 - [ ] Required checks lulus di GitHub; hasil lokal diberi label lokal.
 - [ ] Keamanan, dampak data, dan regresi telah ditinjau.
+- [ ] Batas arsitektur, arah dependensi, clean code dan tes perilaku/jalur gagal telah diperiksa sesuai scope; tidak ada abstraksi tanpa kebutuhan.
 - [ ] Seluruh temuan blocking diselesaikan dan dokumentasi diperbarui.
 - [ ] Verdict memakai APPROVED / CHANGES_REQUESTED / BLOCKED sesuai `docs/REVIEW-CHECKLIST.md`.
 - [ ] Approval AI tidak diperlakukan sebagai izin merge atau production deploy.
