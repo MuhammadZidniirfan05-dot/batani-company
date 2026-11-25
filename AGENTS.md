@@ -8,6 +8,7 @@ Acuan: [PRD](docs/PRD.md) §§3, 9, 11, 13. Berlaku untuk seluruh repository dan
 2. Periksa status Git, branch, remote, perubahan yang sudah ada, dan instruksi tambahan di direktori yang disentuh. Jangan menimpa pekerjaan orang lain.
 3. Jadikan PRD baseline kebutuhan. Keputusan eksplisit terbaru dari owner harus dicatat dengan bukti; jangan mengubah kebutuhan diam-diam. Konflik yang belum diputuskan membuat pekerjaan terdampak BLOCKED.
 4. Jangan mengarang Issue, izin, hasil tes, status CI, atau persetujuan. Baca sumber dan diff aktual.
+5. Sebutkan peran tugas, ID agent/sesi, model dan reasoning aktual jika metadata tersedia sebelum mengerjakan peran itu. Cocokkan dengan pilihan owner pada PRD §9.1. Jika diketahui berbeda, ingatkan owner dengan nilai target dan aktual serta perlunya berpindah ke sesi/peran yang sesuai sebelum pekerjaan peran tersebut. Jika metadata tidak tersedia, tulis **belum terverifikasi** dan minta pemeriksaan pemilih model; jangan menyimpulkan model aktual dari instruksi target.
 
 ## Batas pekerjaan
 
@@ -32,6 +33,12 @@ Acuan: [PRD](docs/PRD.md) §§3, 9, 11, 13. Berlaku untuk seluruh repository dan
 - Jangan deploy staging maupun production pada Fase 3–4. Setiap deployment memerlukan otorisasi owner sesuai scope. Pada fase rilis, production tetap memerlukan persetujuan manusia terpisah, staging terverifikasi, backup, dan rollback.
 - Komentar AI `APPROVED`, tombol manual workflow, dan YAML environment bukan bukti bahwa kontrol GitHub sudah aktif.
 
+## Standar struktur dan kualitas
+
+- Ikuti struktur repository dan konvensi framework yang sudah ada. Beri setiap modul satu tanggung jawab yang jelas dan gunakan nama berkas, kelas, fungsi, serta istilah yang konsisten. Setelah M0 diizinkan berlanjut ke aplikasi, ikuti konvensi Laravel; aturan ini tidak mengizinkan pembuatan folder aplikasi sekarang.
+- Jaga diff sesuai scope Issue: jangan meninggalkan duplikasi, dead code, berkas sementara, atau secret. Tambah abstraksi dan dependency hanya bila kebutuhan dalam scope dapat dijelaskan.
+- Ikuti formatter/linter yang sudah tersedia. Pilih tes yang memeriksa perilaku dan risiko perubahan, termasuk jalur gagal yang relevan; laporkan keterbatasan bila tes yang sesuai belum tersedia.
+
 ## Pengujian dan penyerahan
 
 - Jalankan pemeriksaan yang sesuai dengan berkas yang benar-benar ada. Untuk fondasi saat ini, dari root:
@@ -52,3 +59,5 @@ Acuan: [PRD](docs/PRD.md) §§3, 9, 11, 13. Berlaku untuk seluruh repository dan
 ## Pembagian tanggung jawab
 
 Planner merancang dan memecah scope; Executor mengimplementasikan; Reviewer mengevaluasi secara terpisah; Human Owner memegang keputusan kebutuhan, risiko tinggi, akses, dan rilis. Handoff, transisi, dan konfigurasi ada di [AGENT-WORKFLOW](docs/AGENT-WORKFLOW.md). Bahasa komunikasi proyek: Bahasa Indonesia.
+
+Alur manual: Planner menyiapkan Issue terukur → owner/maintainer menetapkan READY → Worker mengerjakan dan menguji pada branch Issue → hasil, diff dan bukti diserahkan lewat PR yang diizinkan → Reviewer terpisah memeriksa AC, diff dan CI aktual → bila CHANGES_REQUESTED, Worker memperbaiki Issue/PR yang sama dan meminta review ulang pada head/base terbaru. Tidak ada perpindahan otomatis atau izin merge dari komentar AI.
