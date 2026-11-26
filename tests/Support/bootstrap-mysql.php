@@ -13,6 +13,10 @@ foreach ([
     'DB_USERNAME' => 'batani_ci_test',
     'DB_PASSWORD' => 'CI_APP_TEMPORARY_10',
     'DB_URL' => '',
+    'CACHE_STORE' => 'array',
+    'SESSION_DRIVER' => 'array',
+    'QUEUE_CONNECTION' => 'sync',
+    'MAIL_MAILER' => 'array',
 ] as $name => $value) {
     putenv("{$name}={$value}");
     $_ENV[$name] = $value;

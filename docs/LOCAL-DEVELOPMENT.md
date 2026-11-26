@@ -16,6 +16,7 @@ if (-not (Test-Path -LiteralPath .env)) {
 }
 npm ci --ignore-scripts --no-audit --no-fund
 npm run build
+& $phpBin artisan filament:assets --no-interaction
 & $phpBin artisan serve --host=127.0.0.1 --port=8001
 ```
 
@@ -37,6 +38,7 @@ Tidak ada migrasi otomatis dalam instalasi/setup. Migration bawaan Laravel untuk
 & $phpBin $composerPhar audit
 & $phpBin vendor/bin/pint --test
 & $phpBin artisan test
+& $phpBin artisan filament:assets --no-interaction
 npm run build
 npm ci --prefix .github/validation --ignore-scripts --no-audit --no-fund
 node .github/validation/validate.mjs
@@ -45,7 +47,13 @@ node --permission --allow-fs-read=tools/agent-review tools/agent-review/test/pol
 git diff --check
 ```
 
-Tes fondasi menguji Blade, escaping nama, HTTP 404 dan health tanpa MySQL. [phpunit.xml](../phpunit.xml) memaksa koneksi SQLite memory dan URL database kosong untuk mencegah pemakaian database lokal pada tes. Ini bukan pengujian integrasi MySQL/CMS. PHPUnit dipilih dari scaffold resmi dan dikunci bersama dependency; belum ada lapisan/service bisnis yang perlu dibuat.
+Tes fondasi menguji Blade, escaping nama, HTTP 404 dan health tanpa MySQL. [Bootstrap SQLite](../tests/Support/bootstrap-sqlite.php) menetapkan environment tes dan koneksi `:memory:` sebelum aplikasi boot; [guard tes](../tests/Support/SqliteMemoryTestCase.php) memverifikasi target efektif sebelum migration. Jangan menjalankan migration dari CLI biasa terhadap database existing. Aset Filament dipublikasikan dengan `filament:assets`; hasilnya merupakan artefak build yang diabaikan Git, sedangkan CI menerbitkannya ulang. PHPUnit dipilih dari scaffold resmi dan dikunci bersama dependency.
+
+## Fondasi admin terisolasi untuk Issue #12
+
+[Issue #12](https://github.com/MuhammadZidniirfan05-dot/batani-company/issues/12) memakai Filament 5.12.0 pada Laravel 13/PHP 8.5.12. Panel `/admin` hanya menyediakan dashboard dan halaman login; tidak ada registrasi, resource CMS, atau akun admin otomatis. Kolom `users.is_admin` bertipe boolean, default `false`, dan tidak boleh diisi melalui mass assignment. Hanya user dengan flag `true` yang boleh mengakses panel `admin`, termasuk pada environment lokal. Pemberian hak admin nyata memerlukan proses terpisah yang belum menjadi scope Issue ini; jangan membuat akun pada database existing untuk demonstrasi.
+
+Suite default memakai SQLite memory dan akun sintetis per tes. Tes mencakup migrasi/rollback aditif, akses guest/non-admin/admin, pencabutan hak, Livewire login/logout, rate limit, serta CSRF. Suite MySQL pada CI memakai service sekali pakai yang sama dengan Issue #10; tes Filament MySQL membuat dan membersihkan user sintetis di service itu. Tidak ada bukti koneksi MySQL Laragon atau kesiapan deployment. Smoke browser harus memakai server dan database uji terisolasi, bukan server lokal yang sudah ada bila konfigurasi databasenya belum diperiksa.
 
 [Laravel CI](../.github/workflows/application.yml) menjalankan image resmi PHP 8.5.12 yang dikunci digest, verifikasi versi runtime, validasi/install/audit Composer, Pint, tes dan build aset pada runner tanpa secret/izin tulis/deployment. Composer 2.10.2 diverifikasi SHA-256 sebelum dipakai. Image dipilih karena setup PHP berbasis paket runner memasang 8.5.13 meskipun input 8.5.12; pemeriksaan exact version berhasil menolak run awal tersebut. [M0 CI](../.github/workflows/ci.yml) tetap menjalankan validator dan simulator. Kelulusan CI bukan penerimaan M0 atau izin merge/deploy.
 

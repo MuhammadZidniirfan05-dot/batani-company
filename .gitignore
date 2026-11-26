@@ -17,6 +17,9 @@ auth.json
 # Dependency dan hasil build Laravel
 /vendor/
 /public/build/
+/public/css/filament/
+/public/js/filament/
+/public/fonts/filament/
 /public/hot
 /public/storage
 /bootstrap/cache/*.php
