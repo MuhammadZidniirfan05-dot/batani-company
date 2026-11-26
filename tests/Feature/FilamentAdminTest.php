@@ -41,6 +41,14 @@ class FilamentAdminTest extends SqliteMemoryTestCase
         $this->actingAs($user)->get('/admin')->assertForbidden();
 
         app()->instance('env', 'local');
+        // Filament's local access fallback reads config, not the application binding.
+        config(['app.env' => 'local']);
+
+        $this->assertTrue(app()->environment('local'));
+        $this->assertSame('local', config('app.env'));
+        $this->assertSame('sqlite', DB::connection()->getDriverName());
+        $this->assertSame(':memory:', DB::connection()->getDatabaseName());
+
         $this->get('/admin')->assertForbidden();
     }
 
