@@ -28,6 +28,7 @@ class FilamentAdminTest extends SqliteMemoryTestCase
         $this->assertSame('admin', Filament::getPanel('admin')->getId());
         $this->get('/admin/login')->assertOk();
         $this->get('/admin')->assertRedirect('/admin/login');
+        $this->withoutVite();
         $this->get('/')->assertOk();
         $this->get('/up')->assertOk();
         $this->get('/admin/register')->assertNotFound();
